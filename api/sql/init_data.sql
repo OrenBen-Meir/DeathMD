@@ -1,0 +1,1 @@
+-- create deathmd satabase and initialize data

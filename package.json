@@ -1,0 +1,24 @@
+{
+  "name": "death-md",
+  "version": "1.0.0",
+  "description": "Web application that uses machine learning to diagnose medical conditions",
+  "main": "api/app.js",
+  "scripts": {
+    "start": "node api/app.js",
+    "backend": "nodemon api/app.js",
+    "frontend": "npm start --prefix client",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cd client && npm install && npm run build"
+  },
+  "author": "Oren Ben-Meir, Rehman Arshad",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^5.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "method-override": "^3.0.0",
+    "nodemon": "^1.19.4"
+  }
+}
