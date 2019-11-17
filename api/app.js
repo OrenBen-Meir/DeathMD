@@ -1,10 +1,12 @@
 const path           = require('path');
 const fs             = require('fs');
+const cp             = require('child_process');
 const methodOverride = require('method-override');
 const bodyParser     = require('body-parser');
 const mysql          = require('mysql')
 const express        = require('express');
 const app            = express();
+const spawn          = cp.spawn;
 
 //---------------------------------------------------------------------------------------
 // Sets environment variables
@@ -12,6 +14,22 @@ const app            = express();
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
+
+//---------------------------------------------------------------------------------------
+// mysql query strings
+//---------------------------------------------------------------------------------------
+
+const all_symptoms = "SELECT * FROM Symptoms;";
+const all_subjects = "SELECT * FROM Subjects;";
+const all_conditions = "SELECT * FROM Conditions;";
+const subject_symptoms = 
+  "SELECT subject_id,  SubjectSymptoms.symptom_id, intensity, symptom_name " + 
+  "FROM SubjectSymptoms join Symptoms ON SubjectSymptoms.symptom_id = Symptoms.id;";
+
+const all_diagnosis = 
+  "SELECT DiagnosisData.subject_id,  condition_id, condition_name " + 
+  "FROM DiagnosisData join Conditions ON DiagnosisData.condition_id = Conditions.id;";
+
 
 //---------------------------------------------------------------------------------------
 // mysql connection
@@ -34,11 +52,43 @@ con.connect( err => {
   fs.readFile(init_path, (err, contents) => {
     if (err) throw err;
     const init_query = contents.toString();
-    con.query(init_query, err, results => {
+    con.query(init_query, (err, results) => {
       if (err) throw err;
       console.log(results || "Database initialized!!");
+
+      // Querying training data
+
+      // Query String
+      const train_queries = 
+        all_subjects + 
+        all_symptoms + 
+        all_conditions + 
+        subject_symptoms + 
+        all_diagnosis;
+
+      con.query(train_queries, (err, train_data) => {
+        if (err) throw err;
+
+        // Mapping train data into JSON strings
+        train_data = train_data.map(elem => JSON.stringify(elem));
+
+        // Path to python training script
+        const script_path = path.join(process.cwd(), 'api', 'doctor', 'make_doctor.py');
+        
+        // script arguments
+        const train_args = [script_path].concat(train_data);
+
+        // execute training script
+        const train_process = spawn('python', train_args);
+
+        // Script feedback
+        train_process.stdout.on('data', data => {
+          console.log(data.toString());
+        });
+      })
     });
   });
+
 
 });
 

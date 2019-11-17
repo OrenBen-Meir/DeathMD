@@ -15,12 +15,12 @@ CREATE TABLE Subjects(
 
 CREATE TABLE Symptoms(
     id INTEGER PRIMARY KEY, 
-    symptom_name VARCHAR(255)
+    symptom_name VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE Conditions(
     id INTEGER PRIMARY KEY, 
-    condition_name VARCHAR(255)
+    condition_name VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE SubjectSymptoms(
@@ -43,11 +43,16 @@ CREATE TABLE DiagnosisData(
 -- Inserting Dummy Data
 
 -- dummy data for Subjects
+INSERT INTO Subjects(id, added) VALUES(1, False);
 
 -- dummy data for Symptoms
+INSERT INTO Symptoms(id, symptom_name) VALUES(1, "Coughing");
 
 -- dummy data for Conditions
+INSERT INTO Conditions(id, condition_name) VALUES(1, "Flu");
 
 -- dummy data for SubjectSymptoms
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity) VALUES(1, 1, 4);
 
--- dummy data for DiagnosisData
+-- dummy data for 
+INSERT INTO DiagnosisData(subject_id, condition_id) VALUES(1, 1);
