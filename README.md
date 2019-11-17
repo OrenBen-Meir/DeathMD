@@ -23,19 +23,23 @@ If you write ls or dir and your output lists:
 
 ### node.js dependencies
 To install node dependencies, write the following command:
+
     npm install
 
 ### react.js dependencies
 To install react dependencies, write the following commands:
+
     cd client
+
     npm install
 
-### python3.7 
+### python3.7 Dependencies
 If you are using a virtual environment, please activate it before 
 you install your python dependencies. It is needed if your
 dependencies are local to your project.
 
 To install python3.7 dependencies, write the following command:
+
     pip install -r requirements.txt
 
 ## .env
