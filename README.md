@@ -42,9 +42,9 @@ To install python3.7 dependencies, write the following command:
 
     pip install -r requirements.txt
 
-## .env
-You will need a .env file to store your mysql/mariadb database name,
-user, and password. 
+## Environment variables
+You will need a **.env** file to store your mysql/mariadb database name,
+user, and password. That .env file needs to be in the DeathMD directory.
 
 In our .env template, anything in quotes describes 
 the content of our environment variable. Otherwise it is 
