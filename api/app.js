@@ -52,7 +52,7 @@ con.connect( err => {
   fs.readFile(init_path, (err, contents) => {
     if (err) throw err;
     const init_query = contents.toString(); // Query string from init_data.sql
-    // Setting up database using init_data.sql
+    // Setting up database using query string from init_data.sql
     con.query(init_query, (err, results) => {
       if (err) throw err;
       console.log(results || "Database initialized!!");
@@ -77,8 +77,6 @@ con.connect( err => {
       })
     });
   });
-
-
 });
 
 //---------------------------------------------------------------------------------------
