@@ -1,5 +1,4 @@
 const path           = require('path');
-const cp             = require('child_process')
 const fs             = require('fs');
 const methodOverride = require('method-override');
 const bodyParser     = require('body-parser');
@@ -37,7 +36,7 @@ con.connect( err => {
     const init_query = contents.toString();
     con.query(init_query, err, results => {
       if (err) throw err;
-      console.log(results || "Database initialized!!")
+      console.log(results || "Database initialized!!");
     });
   });
 
@@ -48,6 +47,7 @@ con.connect( err => {
 //---------------------------------------------------------------------------------------
 app.use(express.json());
 app.use(methodOverride('_method'));
+app.use(bodyParser.json());
 
 //---------------------------------------------------------------------------------------
 // Use routes
