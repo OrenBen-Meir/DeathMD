@@ -12,6 +12,9 @@ coverage
 # production
 build
 
+# text editor files
+.vscode
+
 # misc
 .DS_Store
 .env.local
