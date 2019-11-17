@@ -60,7 +60,7 @@ DB_PASSWORD="the username for the database (often by default your database will 
 
 PORT=8000
 
-NODE_ENV=production
+NODE_ENV=development
 
 ## Running our app
 

@@ -1,11 +1,11 @@
 -- create deathmd tables and initialize data
 
 -- For development purposes, droping all tables
+DROP TABLE IF EXISTS SubjectSymptoms;
+DROP TABLE IF EXISTS DiagnosisData;
 DROP TABLE IF EXISTS Subjects;
 DROP TABLE IF EXISTS Symptoms;
 DROP TABLE IF EXISTS Conditions;
-DROP TABLE IF EXISTS SubjectSymptoms;
-DROP TABLE IF EXISTS DiagnosisData;
 
 -- For development purposes, creating all tables
 CREATE TABLE Subjects( 
