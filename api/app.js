@@ -46,41 +46,30 @@ const con = mysql.createConnection({
 con.connect( err => {
   if (err) throw err;
   console.log("Connected!");
-
-  // Setting up database using init_data.sql
+  // Getting path to init_data.sql to initialize the database
   init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');
+  // Reading init_data.sql
   fs.readFile(init_path, (err, contents) => {
     if (err) throw err;
-    const init_query = contents.toString();
+    const init_query = contents.toString(); // Query string from init_data.sql
+    // Setting up database using init_data.sql
     con.query(init_query, (err, results) => {
       if (err) throw err;
       console.log(results || "Database initialized!!");
-
-      // Querying training data
-
       // Query String
-      const train_queries = 
-        all_subjects + 
-        all_symptoms + 
-        all_conditions + 
-        subject_symptoms + 
-        all_diagnosis;
-
+      const train_queries = all_subjects + all_symptoms + all_conditions + 
+        subject_symptoms + all_diagnosis;
+      // Querying training data
       con.query(train_queries, (err, train_data) => {
         if (err) throw err;
-
         // Mapping train data into JSON strings
         train_data = train_data.map(elem => JSON.stringify(elem));
-
         // Path to python training script
         const script_path = path.join(process.cwd(), 'api', 'doctor', 'make_doctor.py');
-        
         // script arguments
         const train_args = [script_path].concat(train_data);
-
         // execute training script
         const train_process = spawn('python', train_args);
-
         // Script feedback
         train_process.stdout.on('data', data => {
           console.log(data.toString());
