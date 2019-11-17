@@ -19,9 +19,7 @@ Be sure your path variables are set for all of these technologies.
 
 We will assume we are in the DeathMD directory.
 If you write ls or dir and your output lists:
-"api, client, node_modules, package.json, README.md, requirements.txt, etc"
-
-then you are in the correct folder location
+"api, client, node_modules, package.json, README.md, requirements.txt, etc", then you are in the correct folder location
 
 ### node.js dependencies
 To install node dependencies, write the following command:
@@ -51,9 +49,13 @@ a value you must write into the file.
 Your .env file needs to follow this template:
 
 DB_NAME="database name"
+
 DB_USERNAME="the username for the database (often by default your database will use root)"
+
 DB_PASSWORD="the username for the database (often by default your database will use root)"
+
 PORT=8000
+
 NODE_ENV=production
 
 ## Running our app
