@@ -92,18 +92,27 @@ app.use(bodyParser.json());
 
 // returns array of symptoms
 app.get('/api/symptoms', (req, res) => {
-  res.send("predict")
-})
+  con.query(all_symptoms, (err, results) => {
+    res.json(results);
+  })
+});
+
+// returns array of conditions
+app.get('/api/conditions', (req, res) => {
+  con.query(all_conditions, (err, results) => {
+    res.json(results);
+  })
+});
 
 // recieves symptom data to make and send a diagnosos
 app.post('/api/predict', (req, res) => {
-  res.send("predict")
-})
+  res.send("predict");
+});
 
 // send new data so the machine learning algorithm retrains
 app.post('/api/retrain', (req, res) => {
-  res.send("retrain")
-})
+  res.send("retrain");
+});
 
 //---------------------------------------------------------------------------------------
 // Create Server Using port
