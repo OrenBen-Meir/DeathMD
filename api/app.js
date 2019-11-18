@@ -51,7 +51,8 @@ con.connect( err => {
   // Reading init_data.sql
   fs.readFile(init_path, (err, contents) => {
     if (err) throw err;
-    const init_query = contents.toString(); // Query string from init_data.sql
+    // Query string from init_data.sql
+    const init_query = contents.toString(); 
     // Setting up database using query string from init_data.sql
     con.query(init_query, (err, results) => {
       if (err) throw err;

@@ -52,15 +52,15 @@ a value you must write into the file.
 
 Your .env file needs to follow this template:
 
-DB_NAME="database name"
+	DB_NAME="database name"
 
-DB_USERNAME="the username for the database (often by default your database will use root)"
+	DB_USERNAME="the username for the database (often by default your database will use root)"
 
-DB_PASSWORD="the username for the database (often by default your database will use root)"
+	DB_PASSWORD="the username for the database (often by default your database will use root)"
 
-PORT=8000
+	PORT=8000
 
-NODE_ENV=development
+	NODE_ENV=development
 
 ## Running our app
 
