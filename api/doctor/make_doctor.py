@@ -47,11 +47,13 @@ diagnosis_df.drop(columns=['id'], inplace=True)
 symptoms_array = np.array(subj_symptoms_df) # converts subject symptoms dataframe into a numpy array
 diagnosis_array = np.array(diagnosis_df) # converts diagnosis data into a numpy array
 
-print(str(symptoms_list) + "\n" +str(symptoms_array))
-print(str(conditions_list) + "\n" +str(diagnosis_array))
-
-# creates a doctor object and feed it training data, the object can be thought of as the AI we train
-my_doctor = Doctor(symptoms_array, diagnosis_array, symptoms_list, conditions_list) 
+my_doctor = Doctor() # creates a doctor object, the object can be thought of as the AI we train
+my_doctor.train(symptoms_array, diagnosis_array, symptoms_list, conditions_list) # feed the doctor training data
 
 dump(my_doctor, "doctor.joblib") # serialize doctor object
-print("Training Successful!")
+
+# printing inportant info
+print("\nLogging training and parsing results\n")
+print(str(symptoms_list) + "\n" +str(symptoms_array) + "\n")
+print(str(conditions_list) + "\n" +str(diagnosis_array) + "\n")
+print("Doctor AI Training Successful!")
