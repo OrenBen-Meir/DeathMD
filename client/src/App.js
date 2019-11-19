@@ -1,26 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { 
+  BrowserRouter as Router, 
+  Switch, 
+  Route, 
+} from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import QuestionairePage from './pages/question-form';
+
+// import './css/App.css';
+
+
+
+
+class App extends React.Component {
+  render() {
+    return (
+        <Router>
+          <div className="container-fluid text-center">
+            <div className="row justify-content-center">
+              <Switch>
+        
+                <Route path="/" component={QuestionairePage} />     {/* This is the root path, makes sense to use this since this is a single page application ... */}
+
+              </Switch>
+            </div>
+          </div>
+        </Router>
+    );
+  }
 }
+
 
 export default App;
