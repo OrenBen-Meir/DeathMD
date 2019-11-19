@@ -75,6 +75,9 @@ con.connect( err => {
         train_process.stdout.on('data', data => {
           console.log(data.toString());
         });
+        train_process.stderr.on('data', data => {
+          console.error(data.toString())
+        });
       })
     });
   });
