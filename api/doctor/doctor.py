@@ -1,4 +1,4 @@
-import sklearn
+from sklearn.svm import SVC
 import numpy as np
 
 class Doctor:
@@ -11,46 +11,68 @@ class Doctor:
     """
     
     
-    __init__(self, sym_data, con_data):
+    def __init__(self, symptoms_data = np.array([]), diagnosis_data = np.array([]), symptoms = [], conditions = []):
         """
-        initially sets up doctor with training data.
-        sym_data is short for symptom data and
-        con_data is short for condition data.
+        If all arguments are not null, the doctor object
+        will initially be sert up with training data.
+        symptoms_data is for symptom data and
+        diagnosis_data is diagnosis data.
         Both data must be numpy arrays(matrices to 
         be more accurate) sharing the same amount of rows.
+        In addition, a list of symptoms and conditions
+        are needed. This is so that the indices of symptoms
+        correspond with symptoms_data, for example, symptom[0]
+        represents the column 0 in symptoms_data. The same 
+        relationship applies to conditions and diagnosis_data.
         """
-        self.clfs = []
-        pass
+        self._symptoms = [] # array of symptoms
+        self._classifiers = {} # dictionary of classifiers where a key represents the condition it is classifying for
 
-    train(self, sym_data, con_data):
+        if(len(symptoms_data) and len(diagnosis_data) and len(symptoms) and len(conditions)):
+            self.train(symptoms_data, diagnosis_data, symptoms, conditions)
+
+    def train(self, symptoms_data, diagnosis_data, symptoms, conditions):
         """
         trains doctor from scratch
-        sym_data is short for symptom data and
-        con_data is short for condition data.
+        symptoms_data is for symptom data and
+        diagnosis_data is for diagnosis data.
         Both data must be numpy arrays(matrices 
         to be more accurate) sharing the same 
         amount of rows.
         """
-        pass
+        self._symptoms = symptoms.copy() # set self._symptoms to be a copy of the symptoms list
+        diagnosis_data = np.transpose(diagnosis_data) # transposes diagnosis data (which is a matrix)
 
+        for i in range(len(conditions)):
+            condition = conditions[i] # extracts condition string from condition array
+
+            # sets a classifier such that it's hashed by condition string and uses the gamma kernel
+            self._classifiers[condition] = SVC(kernel='rbf', gamma='auto') 
+            # fits the classifier with symproms data and ith row of diagnosis data which corresponds with the ith value of conditions
+            self._classifiers[condition].fit(symptoms_data, diagnosis_data[i]) 
     
-    retrain(self, sym_data, con_data):
+    def update(self, sym_data, con_data):
         """
-        retrains doctor by appending data
-        sym_data is short for symptom data and
-        con_data is short for condition data.
+        updates doctor by appending data
+        symptoms_data is for symptom data and
+        diagnosis_data is for diagnosis data.
         Both data must be numpy arrays(matrices to 
         be more accurate) sharing the same 
         amount of rows.
+        In addition, a list of symptoms and conditions
+        are needed. This is so that the indices of symptoms
+        correspond with symptoms_data, for example, symptom[0]
+        represents the column 0 in symptoms_data. The same 
+        relationship applies to conditions and diagnosis_data
         """
         pass
 
-   diagnose(self, sym_info):
-       """
-       Performs a medical diagnosis using
-       sym_info (short for symptom info).
-       Symptom info is a 1D numpy array.
-       The result is a corresponding array of
-       symptom values.
-       """
-       pass
+    def diagnose(self, symptom_info):
+        """
+        Performs a medical diagnosis using
+        symptom_info (stands for symptom info).
+        Symptom info is a 1D numpy array.
+        The result is a corresponding dictionary of
+        diagnosis values.
+        """
+        pass
