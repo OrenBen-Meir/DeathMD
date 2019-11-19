@@ -39,6 +39,11 @@ class Doctor:
         Both data must be numpy arrays(matrices 
         to be more accurate) sharing the same 
         amount of rows.
+        In addition, a list of symptoms and conditions
+        are needed. This is so that the indices of symptoms
+        correspond with symptoms_data, for example, symptom[0]
+        represents the column 0 in symptoms_data. The same 
+        relationship applies to conditions and diagnosis_data
         """
         self._symptoms = symptoms.copy() # set self._symptoms to be a copy of the symptoms list
         diagnosis_data = np.transpose(diagnosis_data) # transposes diagnosis data (which is a matrix)
@@ -59,11 +64,6 @@ class Doctor:
         Both data must be numpy arrays(matrices to 
         be more accurate) sharing the same 
         amount of rows.
-        In addition, a list of symptoms and conditions
-        are needed. This is so that the indices of symptoms
-        correspond with symptoms_data, for example, symptom[0]
-        represents the column 0 in symptoms_data. The same 
-        relationship applies to conditions and diagnosis_data
         """
         pass
 
