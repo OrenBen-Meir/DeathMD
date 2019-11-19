@@ -1,6 +1,8 @@
 import sys
 import json
 import pandas as pd
+import numpy as np 
+from doctor import Doctor
 
 subjects = json.loads(sys.argv[1])
 symptoms = json.loads(sys.argv[2])

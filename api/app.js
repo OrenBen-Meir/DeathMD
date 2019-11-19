@@ -69,10 +69,10 @@ con.connect( err => {
         // Script feedback
         train_process.stdout.on('data', data => {
           console.log(data.toString());
-          // Log any error
-          train_process.stderr.on('data', data => {
-            console.error(data.toString())
-          });
+        });
+        // Log any error
+        train_process.stderr.on('data', data => {
+          console.error(data.toString())
         });
       })
     });
