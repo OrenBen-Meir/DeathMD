@@ -21,11 +21,10 @@ subj_sym_dic = ids.copy()  # dictionary of subjects and their symptoms
 subj_diag_dic = ids.copy()  # dictionary of subjects and their diagnosis
 
 for symptm in symptoms:  # create an uninitialized dictionary for subjects and symptoms
-    subj_sym_dic[symptm['symptom_name']] = len(ids)*[0]
+    subj_sym_dic[symptm['symptom_name']] = len(ids["id"])*[0]
 
 for condn in conditions:  # create an uninitialized dictionary for diagnosis
-    subj_diag_dic[condn['condition_name']] = len(ids)*[0]
-
+    subj_diag_dic[condn['condition_name']] = len(ids["id"])*[0]
 
 # dataframe of subject's symptoms
 subj_sym_df = pd.DataFrame(data=subj_sym_dic)
