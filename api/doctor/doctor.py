@@ -11,27 +11,31 @@ class Doctor:
     """
     
     
-    def __init__(self, sym_data, con_data, symptoms, conditions):
+    def __init__(self, symptoms_data = None, diagnosis_data = None, symptoms = None, conditions = None):
         """
-        initially sets up doctor with training data.
-        sym_data is short for symptom data and
-        con_data is short for condition data.
+        If all arguments are not null, the doctor object
+        will initially be sert up with training data.
+        symptoms_data is for symptom data and
+        diagnosis_data is diagnosis data.
         Both data must be numpy arrays(matrices to 
         be more accurate) sharing the same amount of rows.
         In addition, a list of symptoms and conditions
         are needed. This is so that the indices of symptoms
-        correspond with sym_data, for example, symptom[0]
-        represents the column 0 in sym_data. The same 
-        relationship applies to conditions and con_data
+        correspond with symptoms_data, for example, symptom[0]
+        represents the column 0 in symptoms_data. The same 
+        relationship applies to conditions and diagnosis_data.
         """
+        self.symptoms = []
+        self.conditions = []
         self.clfs = {}
-        pass
+        if(symptoms_data != None and diagnosis_data != None and symptoms != None and conditions != None):
+            self.train(symptoms_data, diagnosis_data, symptoms, conditions)
 
-    def train(self, sym_data, con_data):
+    def train(self, symptoms_data, diagnosis_data, symptoms, conditions):
         """
         trains doctor from scratch
-        sym_data is short for symptom data and
-        con_data is short for condition data.
+        symptoms_data is for symptom data and
+        diagnosis_data is for diagnosis data.
         Both data must be numpy arrays(matrices 
         to be more accurate) sharing the same 
         amount of rows.
@@ -39,23 +43,28 @@ class Doctor:
         pass
 
     
-    def retrain(self, sym_data, con_data):
+    def update(self, sym_data, con_data):
         """
-        retrains doctor by appending data
-        sym_data is short for symptom data and
-        con_data is short for condition data.
+        updates doctor by appending data
+        symptoms_data is for symptom data and
+        diagnosis_data is for diagnosis data.
         Both data must be numpy arrays(matrices to 
         be more accurate) sharing the same 
         amount of rows.
+        In addition, a list of symptoms and conditions
+        are needed. This is so that the indices of symptoms
+        correspond with symptoms_data, for example, symptom[0]
+        represents the column 0 in symptoms_data. The same 
+        relationship applies to conditions and diagnosis_data
         """
         pass
 
-    def diagnose(self, sym_info):
+    def diagnose(self, symptom_info):
         """
         Performs a medical diagnosis using
-        sym_info (short for symptom info).
+        symptom_info (stands for symptom info).
         Symptom info is a 1D numpy array.
-        The result is a corresponding array of
-        symptom values.
+        The result is a corresponding dictionary of
+        diagnosis values.
         """
         pass

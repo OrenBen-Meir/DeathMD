@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import numpy as np 
 from doctor import Doctor
+from joblib import dump
 
 subjects = json.loads(sys.argv[1])
 symptoms = json.loads(sys.argv[2])
@@ -50,6 +51,14 @@ for case in diagnosis:  # initialize dataframe of subject's diagnosis
 subj_symptoms_df.drop(columns=['id'], inplace=True)
 diagnosis_df.drop(columns=['id'], inplace=True)
 
+symptoms_array = np.array(subj_symptoms_df)
+diagnosis_array = np.array(diagnosis_df)
+
 print(subj_symptoms_df)
+print("symptoms array:\n"+str(symptoms_array))
 print(diagnosis_df)
+print("diagnosis array:\n"+str(diagnosis_array))
+
+my_doctor = Doctor(symptoms_array, diagnosis_array, symptoms_list, conditions_list)
+dump(my_doctor, "doctor.joblib")
 print("done!")
