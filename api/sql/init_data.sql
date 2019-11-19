@@ -23,15 +23,15 @@ CREATE TABLE SubjectSymptoms(
     and intensity <= 5
   ),
   PRIMARY KEY(subject_id, symptom_id),
-  FOREIGN KEY (subject_id) REFERENCES Subjects(id),
-  FOREIGN KEY (symptom_id) REFERENCES Symptoms(id)
+  FOREIGN KEY (subject_id) REFERENCES Subjects(id) ON DELETE CASCADE,
+  FOREIGN KEY (symptom_id) REFERENCES Symptoms(id) ON DELETE CASCADE
 );
 CREATE TABLE DiagnosisData(
   subject_id INTEGER,
   condition_id INTEGER,
   PRIMARY KEY(subject_id, condition_id),
-  FOREIGN KEY (subject_id) REFERENCES Subjects(id),
-  FOREIGN KEY (condition_id) REFERENCES Conditions(id)
+  FOREIGN KEY (subject_id) REFERENCES Subjects(id) ON DELETE CASCADE,
+  FOREIGN KEY (condition_id) REFERENCES Conditions(id) ON DELETE CASCADE
 );
 -- Inserting Dummy Data
 -- dummy data for Subjects
