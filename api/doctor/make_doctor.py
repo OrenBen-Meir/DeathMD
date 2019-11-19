@@ -2,7 +2,7 @@ import sys
 import json
 import pandas as pd 
 
-subjects = json.loads(sys.argv[1]);
+subjects = json.loads(sys.argv[1]); 
 symptoms = json.loads(sys.argv[2]);
 conditions = json.loads(sys.argv[3]);
 subj_sym = json.loads(sys.argv[4]);

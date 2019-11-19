@@ -1,12 +1,12 @@
 const path           = require('path');
 const fs             = require('fs');
-const cp             = require('child_process');
+const cp             = require('child_process'); 
 const methodOverride = require('method-override');
 const bodyParser     = require('body-parser');
 const mysql          = require('mysql')
 const express        = require('express');
-const app            = express();
-const spawn          = cp.spawn;
+const app            = express();             // obj we are using for web stuff
+const spawn          = cp.spawn;              // function used to execute python scripts
 
 //---------------------------------------------------------------------------------------
 // Sets environment variables
@@ -47,33 +47,33 @@ con.connect( err => {
   if (err) throw err;
   console.log("Connected!");
   // Getting path to init_data.sql to initialize the database
-  init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');
+  init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');       // all the sql commands for maria db
   // Reading init_data.sql
   fs.readFile(init_path, (err, contents) => {
     if (err) throw err;
     // Query string from init_data.sql
     const init_query = contents.toString(); 
     // Setting up database using query string from init_data.sql
-    con.query(init_query, (err, results) => {
+    con.query(init_query, (err, results) => {                               // make db by pushing all theat string to maria
       if (err) throw err;
       console.log(results || "Database initialized!!");
       // Query String
-      const train_queries = all_subjects + all_symptoms + all_conditions + 
+      const train_queries = all_subjects + all_symptoms + all_conditions +    // make another string with the necesary sql commads from 
         subject_symptoms + all_diagnosis;
       // Querying training data
-      con.query(train_queries, (err, train_data) => {
-        if (err) throw err;
+      con.query(train_queries, (err, train_data) => {                         // send it to maria
+        if (err) throw err;   
         // Mapping train data into JSON strings
-        train_data = train_data.map(elem => JSON.stringify(elem));
+        train_data = train_data.map(elem => JSON.stringify(elem));            // training data is now the results of the sql query, turn that data to json to pass to python.
         // Path to python training script
-        const script_path = path.join(process.cwd(), 'api', 'doctor', 'make_doctor.py');
+        const script_path = path.join(process.cwd(), 'api', 'doctor', 'make_doctor.py'); //path to pytohn script
         // script arguments
-        const train_args = [script_path].concat(train_data);
+        const train_args = [script_path].concat(train_data);      // pathtopythonfile+string json trainign data
         // execute training script
-        const train_process = spawn('python', train_args);
+        const train_process = spawn('python', train_args);      // os to call python 
         // Script feedback
         train_process.stdout.on('data', data => {
-          console.log(data.toString());
+          console.log(data.toString());           
         });
       })
     });
@@ -83,7 +83,7 @@ con.connect( err => {
 //---------------------------------------------------------------------------------------
 // Middlewares
 //---------------------------------------------------------------------------------------
-app.use(express.json());
+app.use(express.json());      
 app.use(methodOverride('_method'));
 app.use(bodyParser.json());
 

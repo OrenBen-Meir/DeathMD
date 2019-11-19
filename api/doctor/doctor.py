@@ -10,7 +10,6 @@ class Doctor:
     of each subject
     """
     
-    
     __init__(self, sym_data, con_data):
         """
         initially sets up doctor with training data.
