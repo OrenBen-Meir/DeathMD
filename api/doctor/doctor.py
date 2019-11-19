@@ -1,4 +1,4 @@
-import sklearn
+from sklearn.svm import SVC
 import numpy as np
 
 class Doctor:
@@ -11,7 +11,7 @@ class Doctor:
     """
     
     
-    def __init__(self, symptoms_data = None, diagnosis_data = None, symptoms = None, conditions = None):
+    def __init__(self, symptoms_data = np.array([]), diagnosis_data = np.array([]), symptoms = [], conditions = []):
         """
         If all arguments are not null, the doctor object
         will initially be sert up with training data.
@@ -25,10 +25,10 @@ class Doctor:
         represents the column 0 in symptoms_data. The same 
         relationship applies to conditions and diagnosis_data.
         """
-        self.symptoms = []
-        self.conditions = []
-        self.clfs = {}
-        if(symptoms_data != None and diagnosis_data != None and symptoms != None and conditions != None):
+        self._symptoms = [] # array of symptoms
+        self._classifiers = {} # dictionary of classifiers where a key represents the condition it is classifying for
+
+        if(len(symptoms_data) and len(diagnosis_data) and len(symptoms) and len(conditions)):
             self.train(symptoms_data, diagnosis_data, symptoms, conditions)
 
     def train(self, symptoms_data, diagnosis_data, symptoms, conditions):
@@ -40,8 +40,16 @@ class Doctor:
         to be more accurate) sharing the same 
         amount of rows.
         """
-        pass
+        self._symptoms = symptoms.copy() # set self._symptoms to be a copy of the symptoms list
+        diagnosis_data = np.transpose(diagnosis_data) # transposes diagnosis data (which is a matrix)
 
+        for i in range(len(conditions)):
+            condition = conditions[i] # extracts condition string from condition array
+
+            # sets a classifier such that it's hashed by condition string and uses the gamma kernel
+            self._classifiers[condition] = SVC(kernel='rbf', gamma='auto') 
+            # fits the classifier with symproms data and ith row of diagnosis data which corresponds with the ith value of conditions
+            self._classifiers[condition].fit(symptoms_data, diagnosis_data[i]) 
     
     def update(self, sym_data, con_data):
         """

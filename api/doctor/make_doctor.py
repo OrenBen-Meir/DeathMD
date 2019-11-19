@@ -11,13 +11,6 @@ conditions = json.loads(sys.argv[3])
 subj_sym = json.loads(sys.argv[4])
 diagnosis = json.loads(sys.argv[5])
 
-# Printing all queries, may be deleted later
-print('subjects :\n', subjects, '\n')
-print('symptoms :\n', symptoms, '\n')
-print('conditions :\n', conditions, '\n')
-print('subj_sym :\n', subj_sym, '\n')
-print('diagnosis :\n', diagnosis, '\n')
-
 symptoms_list = [sym_entry['symptom_name'] for sym_entry in symptoms] # list of symptoms
 conditions_list = [con_entry['condition_name'] for con_entry in conditions] # list of conditions
 
@@ -51,14 +44,14 @@ for case in diagnosis:  # initialize dataframe of subject's diagnosis
 subj_symptoms_df.drop(columns=['id'], inplace=True)
 diagnosis_df.drop(columns=['id'], inplace=True)
 
-symptoms_array = np.array(subj_symptoms_df)
-diagnosis_array = np.array(diagnosis_df)
+symptoms_array = np.array(subj_symptoms_df) # converts subject symptoms dataframe into a numpy array
+diagnosis_array = np.array(diagnosis_df) # converts diagnosis data into a numpy array
 
-print(subj_symptoms_df)
-print("symptoms array:\n"+str(symptoms_array))
-print(diagnosis_df)
-print("diagnosis array:\n"+str(diagnosis_array))
+print(str(symptoms_list) + "\n" +str(symptoms_array))
+print(str(conditions_list) + "\n" +str(diagnosis_array))
 
-my_doctor = Doctor(symptoms_array, diagnosis_array, symptoms_list, conditions_list)
-dump(my_doctor, "doctor.joblib")
-print("done!")
+# creates a doctor object and feed it training data, the object can be thought of as the AI we train
+my_doctor = Doctor(symptoms_array, diagnosis_array, symptoms_list, conditions_list) 
+
+dump(my_doctor, "doctor.joblib") # serialize doctor object
+print("Training Successful!")
