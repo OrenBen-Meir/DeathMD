@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np 
 from doctor import Doctor
 from joblib import dump
-import helper_functions
+from helper_functions import doctor_filename
 
 subjects = json.loads(sys.argv[1])
 symptoms = json.loads(sys.argv[2])
@@ -52,7 +52,7 @@ diagnosis_array = np.array(diagnosis_df) # converts diagnosis dataframe into a n
 my_doctor = Doctor(kernel='poly') # creates a doctor object, the object can be thought of as the AI we train
 my_doctor.train(symptoms_array, diagnosis_array, symptoms_list, conditions_list) # feed the doctor training data
 
-dump(my_doctor, "doctor.joblib") # serialize doctor object
+dump(my_doctor, doctor_filename()) # serialize doctor object
 
 # printing inportant info
 print("training subject's symptoms")

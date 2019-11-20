@@ -8,7 +8,6 @@ class Doctor:
     data of symptoms and diagnosis of each subject
     """
     
-    
     def __init__(self, kernel='rbf', gamma='auto'):
         """
         Initialize doctor with an option for kernel and gamme as it uses
@@ -20,11 +19,17 @@ class Doctor:
         self._gamma = gamma
     
     @property
-    def symptoms(self): # returns all symptoms
+    def symptoms(self):
+        """
+        returns all symptoms
+        """
         return self._symptoms.copy()
 
     @property 
-    def conditions(self): # returns all conditions
+    def conditions(self):
+        """
+        returns all conditions
+        """
         return [condition for condition in self._classifiers]
 
     def train(self, symptoms_data, diagnosis_data, symptoms, conditions):

@@ -27,11 +27,11 @@ const subject_symptoms = "SELECT subject_id,  SubjectSymptoms.symptom_id, intens
 const all_diagnosis = "SELECT DiagnosisData.subject_id,  condition_id, condition_name FROM DiagnosisData join Conditions ON DiagnosisData.condition_id = Conditions.id;";
 
 //---------------------------------------------------------------------------------------
-// Machine Learning
+// Helper functions
 //--------------------------------------------------------------------------------------
 
-// Takes in a mysql connection for our database and trains from the data in the database
-function train(connection) {
+// Takes in a mysql connection for our database and trains from the data in the database and will send result to client if res is specified
+function train(connection, res = null) {
   // Query String
   const train_queries = all_subjects + all_symptoms + all_conditions + subject_symptoms + all_diagnosis;
   // Querying training data
@@ -48,11 +48,39 @@ function train(connection) {
     // Script feedback
     train_process.stdout.on('data', data => {
       console.log(data.toString());
+      if(res){
+        res.send('success')
+      }
     });
     // Log any error
     train_process.stderr.on('data', data => {
       console.error(data.toString())
+      if(res){
+        res.sendStatus(400)
+      }
     });
+  });
+}
+
+// diagnoses based on symptom data and will send diagnosis result to client if res is specified
+function diagnose(symptomData, res = null){
+  const script_path = path.join(process.cwd(), 'api', 'doctor', 'diagnose.py');
+  const predict_process = spawn('python', [script_path, JSON.stringify(symptomData)]);
+  predict_process.stdout.on('data', data => {
+    const diagnosis = JSON.parse(data.toString());
+    console.log("Diagnosis requested!!!");
+    console.log("symptom data:", symptomData);
+    console.log("Diagnosis:", diagnosis);
+    if (res){
+      res.json(diagnosis);
+    }
+  });
+  // Log any error
+  predict_process.stderr.on('data', data => {
+    console.error(data.toString());
+    if(res){
+      res.sendStatus(400);
+    }
   });
 }
 
@@ -117,7 +145,7 @@ app.get('/api/conditions', (req, res) => {
 
 // recieves symptom data to make and send a diagnosos
 app.post('/api/predict', (req, res) => {
-  res.send("predict");
+  diagnose(req.body.symptomData, res); // Will handle diagnosis and responding to client
 });
 
 // send new data so the machine learning algorithm retrains

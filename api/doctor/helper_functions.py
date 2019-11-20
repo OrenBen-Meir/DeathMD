@@ -17,3 +17,10 @@ def incr_digit_list(digit_list, base=2):
             return True
         digit_list[i] = 0
     return False
+
+def doctor_filename():
+    """
+    Returns name of the joblib file
+    the Doctor object is being serialized
+    """
+    return "doctor.joblib"
