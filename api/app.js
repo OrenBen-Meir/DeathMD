@@ -165,7 +165,7 @@ app.get('/api/symptoms', (req, res) => {
   });
 });
 
-// sends array of conditions
+// sends array of conditions\
 app.get('/api/conditions', (req, res) => {
   con.query(all_conditions, (err, results) => {
     if(err) {
