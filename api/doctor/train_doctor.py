@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np 
 from doctor import Doctor
 from joblib import dump
+from helper_functions import doctor_filename
 
 subjects = json.loads(sys.argv[1])
 symptoms = json.loads(sys.argv[2])
@@ -47,13 +48,20 @@ diagnosis_df.drop(columns=['subject_id'], inplace=True)
 symptoms_array = np.array(subj_symptoms_df) # converts subject symptoms dataframe into a numpy array
 diagnosis_array = np.array(diagnosis_df) # converts diagnosis dataframe into a numpy array
 
-my_doctor = Doctor() # creates a doctor object, the object can be thought of as the AI we train
+# kernel list: 'rbf', 'sigmoid', 'poly'
+my_doctor = Doctor(kernel='poly') # creates a doctor object, the object can be thought of as the AI we train
 my_doctor.train(symptoms_array, diagnosis_array, symptoms_list, conditions_list) # feed the doctor training data
 
-dump(my_doctor, "doctor.joblib") # serialize doctor object
+dump(my_doctor, doctor_filename()) # serialize doctor object
 
 # printing inportant info
-print("\nLogging training and parsing results\n")
-print(str(symptoms_list) + "\n" +str(symptoms_array) + "\n")
-print(str(conditions_list) + "\n" +str(diagnosis_array) + "\n")
-print("Doctor AI Training Successful!")
+print("training subject's symptoms")
+print(subj_symptoms_df)
+print("training subject's diagnosis")
+print(diagnosis_df)
+
+print("\nTesting average confidence\n")
+avg_confs = my_doctor.avg_confidence() # dictionary of avarage confidences for each condition key
+for condition in avg_confs:
+    print(f'{condition} diagnosis average confidence: {100*avg_confs[condition]}%')
+print("\nDoctor AI Training Successful!")
