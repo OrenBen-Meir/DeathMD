@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np 
 from doctor import Doctor
 from joblib import dump
+import helper_functions
 
 subjects = json.loads(sys.argv[1])
 symptoms = json.loads(sys.argv[2])
@@ -59,13 +60,8 @@ print(subj_symptoms_df)
 print("training subject's diagnosis")
 print(diagnosis_df)
 
-print("Testing everything\n")
-for i in range(6):
-    for j in range(6):
-        for k in range(6):
-            # print('----------------------------------------------------------------')
-            arr = np.array([i,j,k])
-            res = my_doctor.diagnose(arr)
-            print(arr, ":", res)
-
-print("Doctor AI Training Successful!")
+print("\nTesting average confidence\n")
+avg_confs = my_doctor.avg_confidence() # dictionary of avarage confidences for each condition key
+for condition in avg_confs:
+    print(f'{condition} diagnosis average confidence: {100*avg_confs[condition]}%')
+print("\nDoctor AI Training Successful!")

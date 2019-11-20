@@ -1,5 +1,6 @@
 from sklearn.svm import SVC
 import numpy as np
+from helper_functions import incr_digit_list
 
 class Doctor:
     """
@@ -65,5 +66,28 @@ class Doctor:
                 probability_correct = clf.predict_proba(symptom_info)[0][1]
             diagnosis[condition] = {'has_condition': bool(has_condition), 'confidence': probability_correct}
         return diagnosis
+    
+    def avg_confidence(self):
+        """
+        Returns average confidence for each condition for doctor
+        """
+        intensity_limit = 6
+        total_tests = intensity_limit**3
+        conditions_list = self.conditions
+        confidence_sums = len(conditions_list)*[0]
+        test_symptoms = len(self.symptoms)*[0]
+        test_done = True
+        while test_done:
+            test_symptoms_array = np.array(test_symptoms)
+            res = self.diagnose(test_symptoms_array)
+            for i in range(len(conditions_list)):
+                condition = conditions_list[i]
+                confidence_sums[i] += res[condition]['confidence']
+            test_done = incr_digit_list(test_symptoms, base=intensity_limit)
+        confidence_values = {}
+        for i in range(len(conditions_list)):
+            con = conditions_list[i]
+            confidence_values[con] = confidence_sums[i]/total_tests
+        return confidence_values
 
     
