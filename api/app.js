@@ -24,7 +24,6 @@ const all_subjects = "SELECT * FROM Subjects;";
 const all_conditions = "SELECT * FROM Conditions;";
 const subject_symptoms = "SELECT subject_id,  SubjectSymptoms.symptom_id, intensity, symptom_name FROM SubjectSymptoms join Symptoms ON SubjectSymptoms.symptom_id = Symptoms.id;";
 const all_diagnosis = "SELECT DiagnosisData.subject_id,  condition_id, condition_name FROM DiagnosisData join Conditions ON DiagnosisData.condition_id = Conditions.id;";
-const max_subject_id = "SELECT MAX(id) FROM Subjects;";
 
 //---------------------------------------------------------------------------------------
 // Helper functions
@@ -94,6 +93,10 @@ function diagnose(symptomData, res = null){
   });
 }
 
+/*
+* Returns a random value that can fit as a 32-bit integer that isn't
+* in the array names arr.
+*/
 function Random32IntNotInArray(arr)
 {
     const max_val = 2147483647;
@@ -119,7 +122,7 @@ const con = mysql.createConnection({
 
 con.connect( err => {
   if (err) throw err;
-  console.log("Connected!");
+  console.log("Database connected!");
   // Getting path to init_data.sql to initialize the database
   init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');
   // Reading init_data.sql
@@ -148,7 +151,7 @@ app.use(bodyParser.json());
 // Use routes
 //---------------------------------------------------------------------------------------
 
-// returns array of symptoms
+// sends array of symptoms
 app.get('/api/symptoms', (req, res) => {
   con.query(all_symptoms, (err, results) => {
     if(err) {
@@ -156,11 +159,13 @@ app.get('/api/symptoms', (req, res) => {
       console.error(err.stack)
       return res.sendStatus(404);
     }
+    console.log("Sending all symptoms!!");
+    console.log(`All symptoms:\n${JSON.stringify(results)}`);
     return res.json(results);
   });
 });
 
-// returns array of conditions
+// sends array of conditions
 app.get('/api/conditions', (req, res) => {
   con.query(all_conditions, (err, results) => {
     if(err) {
@@ -168,6 +173,8 @@ app.get('/api/conditions', (req, res) => {
       console.error(err.stack)
       return res.sendStatus(404);
     }
+    console.log("Sending all conditions!!");
+    console.log(`All conditions:\n${JSON.stringify(results)}`);
     return res.json(results);
   });
 });
@@ -203,13 +210,10 @@ app.post('/api/retrain', (req, res) => {
     const symptoms = results[0];
     const conditions = results[1];
     const subjects = results[2];
-
-    // initializing array of subject ids
-    let id_subj_array = []; 
-    for(let subj_row of subjects) {
+    let id_subj_array = []; // array of subject ids
+    for(let subj_row of subjects) { // initializing array of subject ids
       id_subj_array.push(subj_row.id);
     }
-
     const newSubjId = Random32IntNotInArray(id_subj_array); // New id of new subjects based on random value that isn't already used as a subject id
     let new_user_query = `INSERT INTO Subjects(id, added) VALUES(${newSubjId}, True);`; // sets up query string of new subject
     for (let symptom_row of symptoms){ // symptom row of symptom query
@@ -229,7 +233,6 @@ app.post('/api/retrain', (req, res) => {
       }
     }
     console.log("New subject query:\n", new_user_query);
-
     // Create an sql transaction, anny error forces a rollback
     con.beginTransaction( (err) => {
       if (err) {
@@ -270,6 +273,4 @@ app.post('/api/retrain', (req, res) => {
 const port = process.env.PORT || 8000;
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-
-  // Start executing python script to train doctor
 });
