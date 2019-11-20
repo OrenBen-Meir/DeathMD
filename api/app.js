@@ -26,6 +26,35 @@ const subject_symptoms = "SELECT subject_id,  SubjectSymptoms.symptom_id, intens
 
 const all_diagnosis = "SELECT DiagnosisData.subject_id,  condition_id, condition_name FROM DiagnosisData join Conditions ON DiagnosisData.condition_id = Conditions.id;";
 
+//---------------------------------------------------------------------------------------
+// Machine Learning
+//--------------------------------------------------------------------------------------
+
+// Takes in a mysql connection for our database and trains from the data in the database
+function train(connection) {
+  // Query String
+  const train_queries = all_subjects + all_symptoms + all_conditions + subject_symptoms + all_diagnosis;
+  // Querying training data
+  connection.query(train_queries, (err, train_data) => {
+    if (err) throw err;
+    // Mapping train data into JSON strings
+    train_data = train_data.map(elem => JSON.stringify(elem));
+    // Path to python training script
+    const script_path = path.join(process.cwd(), 'api', 'doctor', 'train_doctor.py');
+    // script arguments
+    const train_args = [script_path].concat(train_data);
+    // execute training script
+    const train_process = spawn('python', train_args);
+    // Script feedback
+    train_process.stdout.on('data', data => {
+      console.log(data.toString());
+    });
+    // Log any error
+    train_process.stderr.on('data', data => {
+      console.error(data.toString())
+    });
+  });
+}
 
 //---------------------------------------------------------------------------------------
 // mysql connection
@@ -53,28 +82,8 @@ con.connect( err => {
     con.query(init_query, (err, results) => {
       if (err) throw err;
       console.log(results || "Database initialized!!");
-      // Query String
-      const train_queries = all_subjects + all_symptoms + all_conditions + subject_symptoms + all_diagnosis;
-      // Querying training data
-      con.query(train_queries, (err, train_data) => {
-        if (err) throw err;
-        // Mapping train data into JSON strings
-        train_data = train_data.map(elem => JSON.stringify(elem));
-        // Path to python training script
-        const script_path = path.join(process.cwd(), 'api', 'doctor', 'make_doctor.py');
-        // script arguments
-        const train_args = [script_path].concat(train_data);
-        // execute training script
-        const train_process = spawn('python', train_args);
-        // Script feedback
-        train_process.stdout.on('data', data => {
-          console.log(data.toString());
-        });
-        // Log any error
-        train_process.stderr.on('data', data => {
-          console.error(data.toString())
-        });
-      })
+      // train data
+      train(con)
     });
   });
 });
@@ -93,15 +102,17 @@ app.use(bodyParser.json());
 // returns array of symptoms
 app.get('/api/symptoms', (req, res) => {
   con.query(all_symptoms, (err, results) => {
+    if(err) res.sendStatus(404)
     res.json(results);
-  })
+  });
 });
 
 // returns array of conditions
 app.get('/api/conditions', (req, res) => {
   con.query(all_conditions, (err, results) => {
+    if(err) res.sendStatus(404)
     res.json(results);
-  })
+  });
 });
 
 // recieves symptom data to make and send a diagnosos

@@ -40,24 +40,30 @@ class Doctor:
 
         for i in range(len(conditions)):
             condition = conditions[i] # extracts the ith condition string from condition array
-            clf = SVC(kernel=self._kernel, gamma=self._gamma) # sets a support vector machine classifier using the gaussian kernel
+            clf = SVC(kernel=self._kernel, gamma=self._gamma, probability=True) # sets a support vector machine classifier using the gaussian kernel
             clf.fit(symptoms_data,  diagnosis_data[i]) # fits the classifier with symptoms data and ith row of diagnosis data
             # The ith row of diagnosis data corresponds with the ith condition in the conditions list
             self._classifiers[condition] = clf # Stores clf in a _classifiers dictionary whose key is the condition
-    
-    def update(self, sym_data, con_data):
-        """
-        Updates doctor by appending data. symptoms_data is for symptom data and
-        diagnosis_data is for diagnosis data.Both data must be numpy arrays(matrices to 
-        be more accurate) sharing the same amount of rows.
-        """
-        pass
 
     def diagnose(self, symptom_info):
         """
         Performs a medical diagnosis using symptom_info (stands for symptom info).
         Symptom info is a 1D numpy array. The result is a corresponding dictionary of
-        diagnosis values whose key is a condition and its value is its diagnosis.
+        diagnosis values whose key is a condition and its value is another dictionary.
+        That dictionary has a key called 'has_condition' which tells you if you have the
+        condition based on a boolean value. The key 'confidence' represents
+        the confidence that you have the condition.
         """
-        pass
+        symptom_info = np.array([symptom_info])
+        diagnosis = {}
+        for condition in self._classifiers:
+            clf = self._classifiers[condition]
+            has_condition = clf.predict(symptom_info)[0]
+            if has_condition == 0:
+                probability_correct = clf.predict_proba(symptom_info)[0][0]
+            else:
+                probability_correct = clf.predict_proba(symptom_info)[0][1]
+            diagnosis[condition] = {'has_condition': bool(has_condition), 'confidence': probability_correct}
+        return diagnosis
+
     
