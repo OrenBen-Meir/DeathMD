@@ -77,7 +77,7 @@ class Doctor:
         Returns average confidence for each condition for doctor
         """
         intensity_limit = 6
-        total_tests = intensity_limit**3
+        total_tests = intensity_limit**len(self.symptoms)
         conditions_list = self.conditions
         confidence_sums = len(conditions_list)*[0]
         test_symptoms = len(self.symptoms)*[0]

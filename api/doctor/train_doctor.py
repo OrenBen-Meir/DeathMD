@@ -64,8 +64,10 @@ dump(my_doctor, doctor_filename()) # serialize doctor object
 # print(diagnosis_df)
 
 if check_confidence:
-    print("\nTesting average confidence\n")
+    print("Testing average confidence.....")
+    print("------------------------------------------")
     avg_confs = my_doctor.avg_confidence() # dictionary of avarage confidences for each condition key
     for condition in avg_confs:
         print(f'{condition} diagnosis average confidence: {100*avg_confs[condition]}%')
-print("\nDoctor machine-learning / AI Training Successful!")
+    print("------------------------------------------")
+print("Doctor machine-learning / AI Training Successful!")

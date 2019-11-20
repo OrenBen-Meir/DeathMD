@@ -32,6 +32,7 @@ const max_subject_id = "SELECT MAX(id) FROM Subjects;";
 
 // Takes in a mysql connection for our database and trains from the data in the database and will send result to client if res is specified
 function train(connection, res = null) {
+  console.log("Attempting to train doctor AI...")
   // Query String
   const train_queries = all_subjects + all_symptoms + all_conditions + subject_symptoms + all_diagnosis;
   // Querying training data
@@ -56,7 +57,7 @@ function train(connection, res = null) {
     train_process.stdout.on('data', data => {
       console.log(data.toString());
       if(res){
-        return res.sendStatus('success')
+        return res.send('success')
       }
     });
     // Log any error
@@ -91,6 +92,17 @@ function diagnose(symptomData, res = null){
       return res.sendStatus(400);
     }
   });
+}
+
+function Random32IntNotInArray(arr)
+{
+    const max_val = 2147483647;
+    var randval;
+    do
+    {
+      randval = Math.floor(Math.random() * max_val);
+    } while (arr.includes(randval))
+    return randval;
 }
 
 //---------------------------------------------------------------------------------------
@@ -177,12 +189,12 @@ app.post('/api/diagnose', (req, res) => {
 * whose values are boolean.
 */ 
 app.post('/api/retrain', (req, res) => {
+  console.log('Attempting to input new subject data to retrain doctor!')
   // get symptom and diagnosis data
   const symptomData = req.body.symptomData;
   const diagnosisData = req.body.diagnosisData;
-
   //query all symptoms, conditions, and the row with the biggest id in Subjects
-  con.query(all_symptoms+all_conditions+max_subject_id, (err, results) => {
+  con.query(all_symptoms+all_conditions+all_subjects, (err, results) => {
     if(err){
       console.error(err.message);
       console.error(err.stack);
@@ -190,14 +202,22 @@ app.post('/api/retrain', (req, res) => {
     }
     const symptoms = results[0];
     const conditions = results[1];
-    const newId = results[2][0]['MAX(id)'] + 1; // New id of new subjects
-    let new_user_query = `INSERT INTO Subjects(id, added) VALUES(${newId}, True);`; // sets up query string of new subject
+    const subjects = results[2];
+
+    // initializing array of subject ids
+    let id_subj_array = []; 
+    for(let subj_row of subjects) {
+      id_subj_array.push(subj_row.id);
+    }
+
+    const newSubjId = Random32IntNotInArray(id_subj_array); // New id of new subjects based on random value that isn't already used as a subject id
+    let new_user_query = `INSERT INTO Subjects(id, added) VALUES(${newSubjId}, True);`; // sets up query string of new subject
     for (let symptom_row of symptoms){ // symptom row of symptom query
       const symptom_id = symptom_row.id;
       const symptom_name = symptom_row.symptom_name;
       const intensity = symptomData[symptom_name];
       if(intensity) { // makes sure only symptoms with non-zero intensity added
-        new_user_query += `INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity) VALUES(${newId}, ${symptom_id}, ${intensity});`;
+        new_user_query += `INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity) VALUES(${newSubjId}, ${symptom_id}, ${intensity});`;
       }
     }
     for(let condition_row of conditions) { // condition row of condition query
@@ -205,10 +225,10 @@ app.post('/api/retrain', (req, res) => {
       const condition_name = condition_row.condition_name;
       const hasCondition = diagnosisData[condition_name]; // if user has condition
       if(hasCondition) { // Only allows the user's diagnosis of an actual condition to be inserted
-        new_user_query += `INSERT INTO DiagnosisData(subject_id, condition_id) VALUES(${newId}, ${condition_id});`;
+        new_user_query += `INSERT INTO DiagnosisData(subject_id, condition_id) VALUES(${newSubjId}, ${condition_id});`;
       }
     }
-    console.log("New user query:", new_user_query);
+    console.log("New subject query:\n", new_user_query);
 
     // Create an sql transaction, anny error forces a rollback
     con.beginTransaction( (err) => {
