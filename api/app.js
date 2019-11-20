@@ -56,7 +56,7 @@ function train(connection, res = null) {
     train_process.stdout.on('data', data => {
       console.log(data.toString());
       if(res){
-        return res.send('success')
+        return res.sendStatus('success')
       }
     });
     // Log any error
@@ -71,17 +71,21 @@ function train(connection, res = null) {
 
 // diagnoses based on symptom data and will send diagnosis result to client if res is specified
 function diagnose(symptomData, res = null){
+  // get path to diagnose.py
   const script_path = path.join(process.cwd(), 'api', 'doctor', 'diagnose.py');
-  const predict_process = spawn('python', [script_path, JSON.stringify(symptomData)]);
-  predict_process.stdout.on('data', data => {
-    const diagnosis = JSON.parse(data.toString());
+  // execute diagnosis script
+  const diagnosis_process = spawn('python', [script_path, JSON.stringify(symptomData)]);
+  // script feedback
+  diagnosis_process.stdout.on('data', data => {
+    const diagnosis = JSON.parse(data.toString()); // gets diagnosis from script's stdout
     console.log("Diagnosis requested!!!");
+    console.log('diagnosis : ', diagnosis)
     if (res){
-      return res.json(diagnosis);
+      return res.json(diagnosis); // if response object is passed, sends the diagnosis to client
     }
   });
   // Log any error
-  predict_process.stderr.on('data', data => {
+  diagnosis_process.stderr.on('data', data => {
     console.error(data.toString());
     if(res){
       return res.sendStatus(400);
@@ -161,7 +165,7 @@ app.get('/api/conditions', (req, res) => {
 * symptomData is an object whose attributes is named to be symptom names
 * and whose values are numerical values 
 */
-app.post('/api/predict', (req, res) => {
+app.post('/api/diagnose', (req, res) => {
   diagnose(req.body.symptomData, res); // Will handle diagnosis and responding to client
 });
 
@@ -173,59 +177,62 @@ app.post('/api/predict', (req, res) => {
 * whose values are boolean.
 */ 
 app.post('/api/retrain', (req, res) => {
+  // get symptom and diagnosis data
   const symptomData = req.body.symptomData;
   const diagnosisData = req.body.diagnosisData;
+
+  //query all symptoms, conditions, and the row with the biggest id in Subjects
   con.query(all_symptoms+all_conditions+max_subject_id, (err, results) => {
     if(err){
       console.error(err.message);
       console.error(err.stack);
-      return res.send(404);
+      return res.sendStatus(404);
     }
     const symptoms = results[0];
     const conditions = results[1];
-    const newId = results[2][0]['MAX(id)'] + 1;
-    let new_user_query = `INSERT INTO Subjects(id, added) VALUES(${newId}, True);`;
-    for (let symptom_row of symptoms){
+    const newId = results[2][0]['MAX(id)'] + 1; // New id of new subjects
+    let new_user_query = `INSERT INTO Subjects(id, added) VALUES(${newId}, True);`; // sets up query string of new subject
+    for (let symptom_row of symptoms){ // symptom row of symptom query
       const symptom_id = symptom_row.id;
       const symptom_name = symptom_row.symptom_name;
       const intensity = symptomData[symptom_name];
-      if(intensity) {
+      if(intensity) { // makes sure only symptoms with non-zero intensity added
         new_user_query += `INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity) VALUES(${newId}, ${symptom_id}, ${intensity});`;
       }
     }
-    for(let condition_row of conditions) {
+    for(let condition_row of conditions) { // condition row of condition query
       const condition_id = condition_row.id;
       const condition_name = condition_row.condition_name;
-      const hasCondition = diagnosisData[condition_name];
-      if(hasCondition) {
+      const hasCondition = diagnosisData[condition_name]; // if user has condition
+      if(hasCondition) { // Only allows the user's diagnosis of an actual condition to be inserted
         new_user_query += `INSERT INTO DiagnosisData(subject_id, condition_id) VALUES(${newId}, ${condition_id});`;
       }
     }
     console.log("New user query:", new_user_query);
 
-    // Uses that query in this transaction
+    // Create an sql transaction, anny error forces a rollback
     con.beginTransaction( (err) => {
       if (err) {
         return con.rollback( () => {
           console.error(err.message);
           console.error(err.stack);
-          return res.send(404);
+          return res.sendStatus(404);
         });
       };
-      con.query(new_user_query, (err) => {
+      con.query(new_user_query, (err) => { // query new_user_query in transaction
         if(err){
-          return connection.rollback( () => {
+          return con.rollback( () => {
             console.error(err.message);
             console.error(err.stack);
-            return res.send(400);
+            return res.sendStatus(400);
           });
         };
-        con.commit( (err) => {
+        con.commit( (err) => { // transaction ready to be committed
           if (err) {
-            return connection.rollback(function() {
+            return con.rollback(function() {
               console.error(err.message);
               console.error(err.stack);
-              return res.send(400);
+              return res.sendStatus(404);
             });
           };
           console.log("New Subject Added, transaction successful!!");
