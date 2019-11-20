@@ -112,33 +112,30 @@ function Random32IntNotInArray(arr)
 // mysql connection
 //---------------------------------------------------------------------------------------
 
-const con = mysql.createConnection({
+const pool = mysql.createPool({
   host: "localhost",
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database : process.env.DB_NAME,
-  multipleStatements: true
+  multipleStatements: true,
 });
 
-con.connect( err => {
+// Getting path to init_data.sql to initialize the database
+const init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');
+// Reading init_data.sql
+fs.readFile(init_path, (err, contents) => {
   if (err) throw err;
-  console.log("Database connected!");
-  // Getting path to init_data.sql to initialize the database
-  init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');
-  // Reading init_data.sql
-  fs.readFile(init_path, (err, contents) => {
+  // Query string from init_data.sql
+  const init_query = contents.toString(); 
+  // Setting up database using query string from init_data.sql
+  pool.query(init_query, (err) => {
     if (err) throw err;
-    // Query string from init_data.sql
-    const init_query = contents.toString(); 
-    // Setting up database using query string from init_data.sql
-    con.query(init_query, (err) => {
-      if (err) throw err;
-      console.log("Database initialized!!");
-      // train data
-      train(con)
-    });
+    console.log("Database initialized!!");
+    // train data
+    train(pool)
   });
 });
+
 
 //---------------------------------------------------------------------------------------
 // Middlewares
@@ -153,7 +150,7 @@ app.use(bodyParser.json());
 
 // sends array of symptoms
 app.get('/api/symptoms', (req, res) => {
-  con.query(all_symptoms, (err, results) => {
+  pool.query(all_symptoms, (err, results) => {
     if(err) {
       console.error(err.message);
       console.error(err.stack)
@@ -167,7 +164,7 @@ app.get('/api/symptoms', (req, res) => {
 
 // sends array of conditions
 app.get('/api/conditions', (req, res) => {
-  con.query(all_conditions, (err, results) => {
+  pool.query(all_conditions, (err, results) => {
     if(err) {
       console.error(err.message);
       console.error(err.stack)
@@ -201,7 +198,7 @@ app.post('/api/retrain', (req, res) => {
   const symptomData = req.body.symptomData;
   const diagnosisData = req.body.diagnosisData;
   //query all symptoms, conditions, and the row with the biggest id in Subjects
-  con.query(all_symptoms+all_conditions+all_subjects, (err, results) => {
+  pool.query(all_symptoms+all_conditions+all_subjects, (err, results) => {
     if(err){
       console.error(err.message);
       console.error(err.stack);
@@ -234,33 +231,47 @@ app.post('/api/retrain', (req, res) => {
     }
     console.log("New subject query:\n", new_user_query);
     // Create an sql transaction, anny error forces a rollback
-    con.beginTransaction( (err) => {
+    pool.getConnection( (err, connection) => {
       if (err) {
-        return con.rollback( () => {
+        return connection.rollback( () => {
           console.error(err.message);
           console.error(err.stack);
+          connection.release();
           return res.sendStatus(404);
         });
       };
-      con.query(new_user_query, (err) => { // query new_user_query in transaction
-        if(err){
-          return con.rollback( () => {
+      connection.beginTransaction( (err) => {
+        if (err) {
+          return connection.rollback( () => {
             console.error(err.message);
             console.error(err.stack);
-            return res.sendStatus(400);
+            connection.release();
+            return res.sendStatus(404);
           });
         };
-        con.commit( (err) => { // transaction ready to be committed
-          if (err) {
-            return con.rollback(function() {
+        connection.query(new_user_query, (err) => { // query new_user_query in transaction
+          if(err){
+            return connection.rollback( () => {
               console.error(err.message);
               console.error(err.stack);
-              return res.sendStatus(404);
+              connection.release();
+              return res.sendStatus(400);
             });
           };
-          console.log("New Subject Added, transaction successful!!");
-          // retrain doctor
-          train(con, res);
+          connection.commit( (err) => { // transaction ready to be committed
+            if (err) {
+              return connection.rollback(function() {
+                console.error(err.message);
+                console.error(err.stack);
+                connection.release();
+                return res.sendStatus(404);
+              });
+            };
+            console.log("New Subject Added, transaction successful!!");
+            // retrain doctor
+            train(connection, res);
+            connection.release();
+          });
         });
       });
     });
