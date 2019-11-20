@@ -11,6 +11,7 @@ symptoms = json.loads(sys.argv[2])
 conditions = json.loads(sys.argv[3])
 subj_sym = json.loads(sys.argv[4])
 diagnosis = json.loads(sys.argv[5])
+check_confidence = json.loads(sys.argv[6])
 
 symptoms_list = [sym_entry['symptom_name'] for sym_entry in symptoms] # list of symptoms
 conditions_list = [con_entry['condition_name'] for con_entry in conditions] # list of conditions
@@ -60,8 +61,9 @@ print(subj_symptoms_df)
 print("training subject's diagnosis")
 print(diagnosis_df)
 
-print("\nTesting average confidence\n")
-avg_confs = my_doctor.avg_confidence() # dictionary of avarage confidences for each condition key
-for condition in avg_confs:
-    print(f'{condition} diagnosis average confidence: {100*avg_confs[condition]}%')
-print("\nDoctor AI Training Successful!")
+if check_confidence:
+    print("\nTesting average confidence\n")
+    avg_confs = my_doctor.avg_confidence() # dictionary of avarage confidences for each condition key
+    for condition in avg_confs:
+        print(f'{condition} diagnosis average confidence: {100*avg_confs[condition]}%')
+print("\nDoctor machine-learning / AI Training Successful!")

@@ -36,13 +36,20 @@ function train(connection, res = null) {
   const train_queries = all_subjects + all_symptoms + all_conditions + subject_symptoms + all_diagnosis;
   // Querying training data
   connection.query(train_queries, (err, train_data) => {
-    if (err) throw err;
+    if (err){
+      if(res) {
+        console.error(err.message);
+        console.error(err.stacl);
+        return res.status(400);
+      }
+      throw err;
+    } 
     // Mapping train data into JSON strings
     train_data = train_data.map(elem => JSON.stringify(elem));
     // Path to python training script
     const script_path = path.join(process.cwd(), 'api', 'doctor', 'train_doctor.py');
     // script arguments
-    const train_args = [script_path].concat(train_data);
+    const train_args = [script_path].concat(train_data).concat(res == null);
     // execute training script
     const train_process = spawn('python', train_args);
     // Script feedback
@@ -130,7 +137,11 @@ app.use(bodyParser.json());
 // returns array of symptoms
 app.get('/api/symptoms', (req, res) => {
   con.query(all_symptoms, (err, results) => {
-    if(err) res.sendStatus(404)
+    if(err) {
+      console.error(err.message);
+      console.error(err.stack)
+      res.sendStatus(404);
+    }
     res.json(results);
   });
 });
@@ -138,12 +149,18 @@ app.get('/api/symptoms', (req, res) => {
 // returns array of conditions
 app.get('/api/conditions', (req, res) => {
   con.query(all_conditions, (err, results) => {
-    if(err) res.sendStatus(404)
+    if(err) {
+      console.error(err.message);
+      console.error(err.stack)
+      res.sendStatus(404);
+    }
     res.json(results);
   });
 });
 
-// recieves symptom data to make and send a diagnosos
+// recieves symptomData from request body to make and send a diagnosos/
+// symptomData is an object whose attributes is named to be symptom names
+// and whose values are numerical values 
 app.post('/api/predict', (req, res) => {
   diagnose(req.body.symptomData, res); // Will handle diagnosis and responding to client
 });
