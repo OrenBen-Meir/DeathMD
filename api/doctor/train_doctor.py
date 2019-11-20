@@ -56,10 +56,12 @@ my_doctor.train(symptoms_array, diagnosis_array, symptoms_list, conditions_list)
 dump(my_doctor, doctor_filename()) # serialize doctor object
 
 # printing inportant info
-print("training subject's symptoms")
-print(subj_symptoms_df)
-print("training subject's diagnosis")
-print(diagnosis_df)
+
+# dataframes printed
+# print("training subject's symptoms")
+# print(subj_symptoms_df)
+# print("training subject's diagnosis")
+# print(diagnosis_df)
 
 if check_confidence:
     print("\nTesting average confidence\n")
