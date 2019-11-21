@@ -29,13 +29,13 @@ const all_diagnosis = "SELECT DiagnosisData.subject_id,  condition_id, condition
 // Helper functions
 //--------------------------------------------------------------------------------------
 
-// Takes in a mysql connection for our database and trains from the data in the database and will send result to client if res is specified
-function train(connection, res = null) {
+// Takes in a mysql pool for our database and trains from the data in the database and will send result to client if res is specified
+function train(pool, res = null) {
   console.log("Attempting to train doctor AI...")
   // Query String
   const train_queries = all_subjects + all_symptoms + all_conditions + subject_symptoms + all_diagnosis;
   // Querying training data
-  connection.query(train_queries, (err, train_data) => {
+  pool.query(train_queries, (err, train_data) => {
     if (err){
       if(res) {
         console.error(err.message);
