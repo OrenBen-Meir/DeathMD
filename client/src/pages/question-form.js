@@ -10,10 +10,17 @@ export default class QuestionForm extends Component {
 
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.onRetrain = this.onRetrain.bind(this);
+        this.onCorrect = this.onCorrect.bind(this);
+        this.onSubmitCorrection = this.onSubmitCorrection.bind(this);
         
+
         this.state = {
             symptoms: [],           // This is the array of symptoms we're getting from the back end.
             response: {},           // user's response 
+            diagnosed: false,        // If user diagnosed
+            retrain: false,        // If the user want's to retrain or not?
+            correction: {}
         }
          
     }
@@ -51,8 +58,15 @@ export default class QuestionForm extends Component {
 
         axios.post('/api/diagnose', { symptomData })
         .then(res => {
-            const result = res;
-            console.log(result);
+            const result = res.data;
+            let correction = {};
+            for(let condition in result) correction[condition] = result[condition].has_condition;
+            this.setState({
+                response: result,
+                diagnosed: true,
+                correction: correction
+            })
+            console.log(this.state.response);           // We have our result!!! 
         }).catch((err) => {
             console.log(err);
             console.log("=========================");
@@ -62,7 +76,8 @@ export default class QuestionForm extends Component {
 
     onChange(e) {
         const name = e.target.name;
-        const intensity = parseInt(e.target.value);
+        let intensity = parseInt(e.target.value);
+        if(!intensity) intensity = 0;
         let symptoms =  this.state.symptoms
         const index = symptoms.findIndex(elem => elem.symptomName === name);
         symptoms[index] = {symptomName: name, intensity : intensity };
@@ -70,6 +85,23 @@ export default class QuestionForm extends Component {
         // console.log(this.state.symptoms);
         
     }
+
+    onCorrect(e){
+
+    }
+    
+    onSubmitCorrection(e){
+
+    }
+
+    onRetrain() {
+        this.setState({
+            retrain: true,
+        });
+    }
+
+
+
 
     render() {
 
@@ -83,10 +115,50 @@ export default class QuestionForm extends Component {
             )
         })
 
+        let responseJsx = [];
+        for(let condition in this.state.response){
+            if(this.state.response[condition].has_condition)
+                responseJsx.push((
+                    <div>
+                        <h5>{condition}</h5>
+                        <div>Confidence: {this.state.response[condition].confidence}</div>
+                    </div>
+                ))
+        }
+
+        let resultHeading = null;
+        if(this.state.diagnosed){
+            resultHeading = responseJsx.length>0? 
+            (<h3>Lets hope your diagnosed conditions aren't fatal! 💀</h3>):
+            (
+                <div>
+                    <h3>Congradulations, you haven't died yet!</h3>
+                    <img src="https://www.sideshow.com/wp/wp-content/uploads/2014/08/lsterminator.jpg"></img>
+                </div>
+            );
+        }
+
+        let correctionForm = []; 
+        if(this.state.diagnosed){
+            for(let condition in this.state.correction){
+                correctionForm.push(
+                    (
+                        <div>
+                            <input type="checkbox" name={condition} value={this.state.correction[condition].has_condition}></input> {condition}<br></br>
+                        </div>
+                    )
+                );
+            }
+        }
+
+        const retrainHeader = this.state.diagnosed?(<h3>Not satisfied? Fill out what you think are the correct diagnosis</h3>): null;
 
         return (
             <div>
+                <h1>Welcome to DeathMD!</h1>
+                <h2>Are you ready?</h2>
                 <div className="container-fluid">
+                    
                     <div className="row d-flex justify-content-center">
                         <div className="col-md-6">
                             <form>
@@ -96,8 +168,22 @@ export default class QuestionForm extends Component {
                             <button type='submit' onClick={this.onSubmit}>Submit</button>
                         </div>
                     </div>
+
+                    {resultHeading}
+                    {responseJsx}
+                    {retrainHeader}
+
+                    
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-md-6">
+                            <form>
+                                {correctionForm}
+                            </form>
+                        </div>
+                    </div>
+                    <button type='submit' onClick={this.onSubmit}>Submit</button>
+                    
                 </div>
-                
             </div>
         );
     }
