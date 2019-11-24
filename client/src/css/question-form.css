@@ -1,0 +1,69 @@
+
+html,body {
+    background-color: #434747;
+}
+
+.btn-custom {
+    background: #723dbe !important;
+    border-color:#7532A6 !important;
+    color:#fff;
+    font-size: 20px;
+    font-weight: 600;
+    min-height: 48px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.btn-custom:focus,
+.btn-custom:active,
+.btn-custom :hover,
+.btn-custom:active:focus {
+    background: #54229d;
+    border-color: #54229d;
+    color:#fff;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.btn-custom:hover {
+    transform: translateY(-1px);
+    background: #F0891A;
+}
+
+.btn-custom:focus {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.img-custom{
+    padding: 3rem;
+}
+
+.border-box-custom {
+
+    border: 3px solid #fff;
+}
+
+.input-box-custom {
+    box-decoration-break: none;
+    text-decoration: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+label {
+    font-size: 20px;
+}
+
+input {
+    height: auto;
+    width: auto;
+}
+
+.logo-custom {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.logo-custom:hover {
+    transform: translateY(-2px);
+}
+
+.correction-custom {
+    font-size: 25px;
+}

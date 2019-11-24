@@ -1,0 +1,116 @@
+:root {
+    --input-padding-x: 1.5rem;
+    --input-padding-y: 0.75rem;
+  }
+  
+  html, body {margin: 0; height: 100%;}
+  img {margin-bottom: 50px}
+
+/*
+  ::-webkit-scrollbar { 
+    display: none;       
+  }
+  
+*/
+  .login,
+  .image {
+    min-height: 100vh;
+  }
+  
+  #huntr-react-container{
+    display:none;
+    }
+  
+.text-Label {
+  text-align: center;
+  align-content: center;
+}
+  
+
+section {
+    display: block;
+    margin: auto;
+    color: #fff;
+    width: 100%;
+    background: linear-gradient(-45deg,  #FF944D, #FCF000, #EE7752, #E73C7E, #23A6D5, #00B359, #23D5AB, #091382);
+    background-size: 400%, 400%;
+    position: relative;
+    animation: animate 10s ease-in-out infinite;
+    padding: 5%;
+  }
+
+  @keyframes animate {
+    0%{ background-position: 0 50%; }
+    50%{ background-position: 100% 50%; }
+    100%{ background-position: 0 50%; }
+  }
+
+
+.login-Logo {
+  margin-left: 37%;
+}
+  
+.form-label-group {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.placement {
+    margin-left: 15%; 
+    margin-right: 5%;
+}
+
+.color {
+    background: #3b3737;
+}
+
+.about-Oren {
+    z-index: 2;
+    display: block;
+    font-size: 2rem;
+    color: white;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	border: 3px solid #fff;
+	position: absolute;
+	top: 50%; 
+	left: 20%;
+	transform: translate(-50%, -50%);
+	padding: 2rem 4rem;
+	max-width: 100%;
+	min-width: 10%
+}
+
+.about-Rehman {
+    z-index: 2;
+    display: block;
+    font-size: 2rem;
+    color: white;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	border: 3px solid #fff;
+	position: absolute;
+	top: 50%; 
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 2rem 4rem;
+	max-width: 100%;
+	min-width: 10%
+}
+
+.about-Rifat {
+    z-index: 2;
+    display: block;
+    font-size: 2rem;
+    color: white;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	border: 3px solid #fff;
+	position: absolute;
+	top: 50%; 
+	left: 81%;
+	transform: translate(-50%, -50%);
+	padding: 2rem 4rem;
+	max-width: 100%;
+	min-width: 10%
+}
