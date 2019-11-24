@@ -10,7 +10,7 @@ export default class QuestionForm extends Component {
 
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
-        this.onRetrain = this.onRetrain.bind(this);
+        this.setRetrain = this.setRetrain.bind(this);
         this.onCorrect = this.onCorrect.bind(this);
         this.onSubmitCorrection = this.onSubmitCorrection.bind(this);
         
@@ -19,7 +19,7 @@ export default class QuestionForm extends Component {
             symptoms: [],           // This is the array of symptoms we're getting from the back end.
             response: {},           // user's response 
             diagnosed: false,        // If user diagnosed
-            retrain: false,        // If the user want's to retrain or not?
+            retrain: false,        // If the user retrained
             correction: {}
         }
          
@@ -60,12 +60,13 @@ export default class QuestionForm extends Component {
         .then(res => {
             const result = res.data;
             let correction = {};
-            for(let condition in result) correction[condition] = result[condition].has_condition;
+            for(let condition in result) correction[condition] = false;
             this.setState({
                 response: result,
                 diagnosed: true,
                 correction: correction
             })
+            this.setRetrain(false)
             console.log(this.state.response);           // We have our result!!! 
         }).catch((err) => {
             console.log(err);
@@ -87,16 +88,33 @@ export default class QuestionForm extends Component {
     }
 
     onCorrect(e){
-
+        console.log(e.target.name)
+        let correction = this.state.correction;
+        correction[e.target.name] = !correction[e.target.name]
+        this.setState({ correction });
+        // console.log(this.state.correction);
     }
     
     onSubmitCorrection(e){
+        let symptomData = {};
 
+        this.state.symptoms.forEach( (elem) => {    
+            symptomData[elem.symptomName] = elem.intensity
+        })
+        axios.post('/api/retrain', {symptomData, diagnosisData: this.state.correction})
+        .then(res => {
+            console.log(res.data);
+            this.setRetrain(true);
+        }).catch((err) => {
+            console.log(err);
+            console.log("=========================");
+            console.log(err.stack);
+        })
     }
 
-    onRetrain() {
+    setRetrain(val) {
         this.setState({
-            retrain: true,
+            retrain: val,
         });
     }
 
@@ -144,7 +162,7 @@ export default class QuestionForm extends Component {
                 correctionForm.push(
                     (
                         <div>
-                            <input type="checkbox" name={condition} value={this.state.correction[condition].has_condition}></input> {condition}<br></br>
+                            <input type="checkbox" name={condition} value={this.state.correction[condition]} onClick={this.onCorrect}></input> {condition}<br></br>
                         </div>
                     )
                 );
@@ -152,6 +170,8 @@ export default class QuestionForm extends Component {
         }
 
         const retrainHeader = this.state.diagnosed?(<h3>Not satisfied? Fill out what you think are the correct diagnosis</h3>): null;
+        const correctButton = this.state.diagnosed?(<button type='submit' onClick={this.onSubmitCorrection}>Submit</button>):null;
+        const retrained = this.state.retrain?(<div>Correction sent, model will be re-trained to better predict your imminent demise!</div>):null;
 
         return (
             <div>
@@ -181,8 +201,9 @@ export default class QuestionForm extends Component {
                             </form>
                         </div>
                     </div>
-                    <button type='submit' onClick={this.onSubmit}>Submit</button>
-                    
+                    {correctButton}
+                    {retrained}
+
                 </div>
             </div>
         );
