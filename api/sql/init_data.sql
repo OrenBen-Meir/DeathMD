@@ -191,3 +191,17 @@ VALUES(11, 3, 3);
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(11, 1);
 -- ---------------------------------------------------------------
+  -- subject 12 --
+INSERT INTO Subjects(id, added)
+VALUES(12, False);
+-- subject 11 symptoms
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(12, 1, 5);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(12, 2, 1);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(12, 3, 3);
+-- subject 10 diagnosis
+INSERT INTO DiagnosisData(subject_id, condition_id)
+VALUES(12, 1);
+-- -------------
