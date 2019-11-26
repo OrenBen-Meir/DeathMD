@@ -31,3 +31,4 @@ yarn-debug.log*
 yarn-error.log*
 
 doctor.joblib
+api/Open db.config.js

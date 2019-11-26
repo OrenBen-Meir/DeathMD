@@ -9,11 +9,24 @@ const app            = express();
 const spawn          = cp.spawn;
 
 //---------------------------------------------------------------------------------------
-// Sets environment variables
+// Sets database info and env variables
 //---------------------------------------------------------------------------------------
-
+let db_url;
+let db_username;
+let db_password;
+let db_name;
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
+  db_url = process.env.DATABASE_URL;
+  db_username = process.env.DB_USERNAME;
+  db_password = process.env.DB_PASSWORD;
+  db_name = process.env.DB_NAME;
+} else {
+  const config = require('./Open db.config');
+  db_url = config.HOST;
+  db_username = config.USER;
+  db_password = config.PASSWORD;
+  db_name = config.DB;
 }
 
 //---------------------------------------------------------------------------------------
@@ -114,10 +127,10 @@ function Random32IntNotInArray(arr)
 //---------------------------------------------------------------------------------------
 
 const pool = mysql.createPool({
-  host: process.env.DATABASE_URL,
-  user: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database : process.env.DB_NAME,
+  host: db_url,
+  user: db_username,
+  password: db_password,
+  database : db_name,
   multipleStatements: true,
 });
 
