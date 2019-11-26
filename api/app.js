@@ -4,6 +4,7 @@ const cp             = require('child_process');
 const methodOverride = require('method-override');
 const bodyParser     = require('body-parser');
 const mysql          = require('mysql')
+const morgan         = require('morgan');
 const express        = require('express');
 const app            = express();
 const spawn          = cp.spawn;
