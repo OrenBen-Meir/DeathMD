@@ -29,6 +29,14 @@ if (process.env.NODE_ENV !== 'production') {
   db_name = config.DB;
 }
 
+//-----------------------------------------------------------------------------------------
+// deployment
+//-----------------------------------------------------------------------------------------
+
+// add http request logging to help us debug and audit app use
+const logFormat = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
+app.use(morgan(logFormat));
+
 //---------------------------------------------------------------------------------------
 // mysql query strings
 //---------------------------------------------------------------------------------------
@@ -299,6 +307,19 @@ app.post('/api/retrain', (req, res) => {
     });
   })
 });
+
+//---------------------------------------------------------------------------------------
+// Connecting to react for deployment
+//---------------------------------------------------------------------------------------
+// for production use, we serve the static react build folder
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  // all unknown routes should be handed to our react app
+  app.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+  });
+}
 
 //---------------------------------------------------------------------------------------
 // Create Server Using port
