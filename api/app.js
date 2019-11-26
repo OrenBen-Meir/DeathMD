@@ -182,7 +182,15 @@ app.get('/api/conditions', (req, res) => {
 * and whose values are numerical values 
 */
 app.post('/api/diagnose', (req, res) => {
-  diagnose(req.body.symptomData, res); // Will handle diagnosis and responding to client
+  let diagnosable = true;
+  const symptomData = req.body.symptomData;
+  for(let symptomName in symptomData ){
+    const intensity = symptomData[symptomName];
+    if( intensity < 0 || 5 < intensity){ 
+      return res.sendStatus(400);
+    } 
+  }
+  diagnose(symptomData, res); // Will handle diagnosis and responding to client 
 });
 
 /*
