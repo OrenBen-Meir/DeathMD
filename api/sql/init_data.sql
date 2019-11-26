@@ -34,31 +34,35 @@ CREATE TABLE DiagnosisData(
   FOREIGN KEY (condition_id) REFERENCES Conditions(id) ON DELETE CASCADE
 );
 -- Inserting Dummy Data
-
 -- Dummy data for symptoms
-INSERT INTO Conditions(id, symptom_name)
-VALUES(1, "Coughing");                  --flu
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(2, "Chest Pain");                --heart disease
+VALUES(1, "Coughing");
+--flu
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(3, "Constipation");              --colon
+VALUES(2, "Chest Pain");
+--heart disease
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(4, "Blood in stool");            --colon
+VALUES(3, "Constipation");
+--colon
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(5, "Sweating");                  --heart disease
+VALUES(4, "Blood in stool");
+--colon
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(6, "Irregular Heartbeat");       --heart disease
+VALUES(5, "Sweating");
+--heart disease
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(7, "Fever");                     --flu
-
--- dummy data for Conditions
+VALUES(6, "Irregular Heartbeat");
+--heart disease
+INSERT INTO Symptoms(id, symptom_name)
+VALUES(7, "Fever");
+--flu
+  -- dummy data for Conditions
 INSERT INTO Conditions(id, condition_name)
 VALUES(1, "Flu");
 INSERT INTO Conditions(id, condition_name)
 VALUES(2, "Heart Disease");
 INSERT INTO Conditions(id, condition_name)
 VALUES(3, "Colon Cancer");
-
 -- dummy data for subjects, their symptoms, and diagnosis
   -- subject 1 --
 INSERT INTO Subjects(id, added)
