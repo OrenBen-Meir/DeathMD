@@ -146,22 +146,25 @@ const pool = mysql.createPool({
   connectionLimit: db_connections
 });
 
-// Getting path to init_data.sql to initialize the database
-const init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');
-// Reading init_data.sql
-fs.readFile(init_path, (err, contents) => {
-  if (err) throw err;
-  // Query string from init_data.sql
-  const init_query = contents.toString(); 
-  // Setting up database using query string from init_data.sql
-  pool.query(init_query, (err) => {
+if (process.env.NODE_ENV !== 'production'){
+  // Getting path to init_data.sql to initialize the database
+  const init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');
+  // Reading init_data.sql
+  fs.readFile(init_path, (err, contents) => {
     if (err) throw err;
-    console.log("Database initialized!!");
-    // train data
-    train(pool)
+    // Query string from init_data.sql
+    const init_query = contents.toString(); 
+    // Setting up database using query string from init_data.sql
+    pool.query(init_query, (err) => {
+      if (err) throw err;
+      console.log("Database initialized!!");
+      // train data
+      train(pool)
+    });
   });
-});
-
+} else {
+  train(pool)
+}
 
 //---------------------------------------------------------------------------------------
 // Middlewares
