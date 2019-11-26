@@ -4,6 +4,8 @@
   "description": "Web application that uses machine learning to diagnose medical conditions",
   "main": "api/app.js",
   "scripts": {
+    "client-install": "npm install --prefix client",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
     "start": "node api/app.js",
     "backend": "nodemon api/app.js",
     "frontend": "npm start --prefix client",
