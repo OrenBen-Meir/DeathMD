@@ -11,9 +11,12 @@ const spawn          = cp.spawn;
 //---------------------------------------------------------------------------------------
 // Sets environment variables
 //---------------------------------------------------------------------------------------
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
+
+// if (process.env.NODE_ENV !== 'production') {
+//   require('dotenv').config();
+// }
+
+require('dotenv').config();
 
 //---------------------------------------------------------------------------------------
 // mysql query strings
@@ -113,7 +116,7 @@ function Random32IntNotInArray(arr)
 //---------------------------------------------------------------------------------------
 
 const pool = mysql.createPool({
-  host: "localhost",
+  host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database : process.env.DB_NAME,
