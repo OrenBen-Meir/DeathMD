@@ -37,25 +37,25 @@ CREATE TABLE DiagnosisData(
 -- Dummy data for symptoms
 INSERT INTO Symptoms(id, symptom_name)
 VALUES(1, "Coughing");
---flu
+-- flu
 INSERT INTO Symptoms(id, symptom_name)
 VALUES(2, "Chest Pain");
---heart disease
+-- heart disease
 INSERT INTO Symptoms(id, symptom_name)
 VALUES(3, "Constipation");
---colon
+-- colon
 INSERT INTO Symptoms(id, symptom_name)
 VALUES(4, "Blood in stool");
---colon
+-- colon
 INSERT INTO Symptoms(id, symptom_name)
 VALUES(5, "Sweating");
---heart disease
+-- heart disease
 INSERT INTO Symptoms(id, symptom_name)
 VALUES(6, "Irregular Heartbeat");
---heart disease
+-- heart disease
 INSERT INTO Symptoms(id, symptom_name)
 VALUES(7, "Fever");
---flu
+-- flu
   -- dummy data for Conditions
 INSERT INTO Conditions(id, condition_name)
 VALUES(1, "Flu");
@@ -125,9 +125,9 @@ VALUES(5, False);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(5, 1, 5);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
-VALUES(5, 3, 7);
-INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(5, 3, 3);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(5, 7, 5);
 -- subject 5 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(5, 1);
