@@ -34,20 +34,31 @@ CREATE TABLE DiagnosisData(
   FOREIGN KEY (condition_id) REFERENCES Conditions(id) ON DELETE CASCADE
 );
 -- Inserting Dummy Data
--- dummy data for Symptoms
+
+-- Dummy data for symptoms
+INSERT INTO Conditions(id, symptom_name)
+VALUES(1, "Coughing");                  --flu
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(1, "Coughing");
+VALUES(2, "Chest Pain");                --heart disease
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(2, "Erectile Dysfunction");
+VALUES(3, "Constipation");              --colon
 INSERT INTO Symptoms(id, symptom_name)
-VALUES(3, "Constipation");
+VALUES(4, "Blood in stool");            --colon
+INSERT INTO Symptoms(id, symptom_name)
+VALUES(5, "Sweating");                  --heart disease
+INSERT INTO Symptoms(id, symptom_name)
+VALUES(6, "Irregular Heartbeat");       --heart disease
+INSERT INTO Symptoms(id, symptom_name)
+VALUES(7, "Fever");                     --flu
+
 -- dummy data for Conditions
 INSERT INTO Conditions(id, condition_name)
 VALUES(1, "Flu");
 INSERT INTO Conditions(id, condition_name)
-VALUES(2, "Hgh Blood Pressure");
+VALUES(2, "Heart Disease");
 INSERT INTO Conditions(id, condition_name)
 VALUES(3, "Colon Cancer");
+
 -- dummy data for subjects, their symptoms, and diagnosis
   -- subject 1 --
 INSERT INTO Subjects(id, added)
@@ -55,6 +66,8 @@ VALUES(1, False);
 -- subject 1 symptoms
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(1, 1, 4);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(1, 7, 5);
 -- subject 1 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(1, 1);
@@ -65,6 +78,12 @@ VALUES(2, False);
 -- subject 2 symptoms
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(2, 1, 1);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(2, 2, 3);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(2, 5, 4);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(2, 6, 4);
 -- subject 2 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(2, 2);
@@ -74,9 +93,9 @@ INSERT INTO Subjects(id, added)
 VALUES(3, False);
 -- subject 3 symptoms
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
-VALUES(3, 3, 5);
+VALUES(3, 5, 1);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
-VALUES(3, 1, 2);
+VALUES(3, 4, 4);
 -- subject 3 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(3, 3);
@@ -86,9 +105,11 @@ INSERT INTO Subjects(id, added)
 VALUES(4, False);
 -- subject 4 symptoms
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
-VALUES(4, 1, 0);
-INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(4, 2, 5);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(4, 6, 5);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(4, 1, 2);
 -- subject 4 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(4, 2);
@@ -99,6 +120,10 @@ VALUES(5, False);
 -- subject 5 symptoms
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(5, 1, 5);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(5, 3, 7);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(5, 3, 3);
 -- subject 5 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(5, 1);
@@ -137,6 +162,14 @@ INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(8, 2, 5);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(8, 3, 4);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(8, 4, 4);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(8, 5, 4);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(8, 6, 4);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(8, 7, 4);
 -- subject 8 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(8, 1);
@@ -150,11 +183,17 @@ INSERT INTO Subjects(id, added)
 VALUES(9, False);
 -- subject 9 symptoms
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
-VALUES(9, 1, 3);
+VALUES(9, 1, 5);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(9, 2, 4);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
-VALUES(9, 3, 5);
+VALUES(9, 3, 2);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(9, 4, 5);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(9, 6, 3);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(9, 7, 2);
 -- subject 9 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(9, 1);
@@ -172,7 +211,11 @@ VALUES(10, 1, 5);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(10, 2, 3);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
-VALUES(10, 3, 0);
+VALUES(10, 5, 4);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(10, 6, 2);
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(10, 7, 5);
 -- subject 10 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(10, 1);
@@ -187,21 +230,23 @@ INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(11, 2, 2);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(11, 3, 3);
--- subject 10 diagnosis
+-- subject 11 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(11, 1);
 -- ---------------------------------------------------------------
   -- subject 12 --
 INSERT INTO Subjects(id, added)
 VALUES(12, False);
--- subject 11 symptoms
+-- subject 12 symptoms
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(12, 1, 5);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(12, 2, 1);
 INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
 VALUES(12, 3, 3);
--- subject 10 diagnosis
+INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity)
+VALUES(12, 7, 3);
+-- subject 12 diagnosis
 INSERT INTO DiagnosisData(subject_id, condition_id)
 VALUES(12, 1);
 -- -------------

@@ -143,7 +143,7 @@ export default class QuestionForm extends Component {
       (
         <div className="text-white">
           <h3>Congratulations, you haven't died yet!</h3>
-          <img className="img-fluid img-custom rounded" src="https://www.sideshow.com/wp/wp-content/uploads/2014/08/lsterminator.jpg" alt="T-400 Terminator"></img>
+          <img className="img-fluid img-custom rounded" src="https://i.ytimg.com/vi/HaGkk60kcjQ/maxresdefault.jpg" alt="Kono Dio Da"></img>
         </div>
       );
     }
@@ -214,7 +214,7 @@ export default class QuestionForm extends Component {
            
             <footer className="mt-5">
               <a href="/about">About us</a>    
-              <p> Licensed by SkyNet all rights reserved</p>
+              <p>  MIT License </p>
               <p> Team Star Platinum © 2019</p> 
             </footer>
               
