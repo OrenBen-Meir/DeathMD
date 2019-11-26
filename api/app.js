@@ -16,6 +16,7 @@ let db_url;
 let db_username;
 let db_password;
 let db_name;
+let db_connections = 10;
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
   db_url = process.env.DATABASE_URL;
@@ -28,6 +29,7 @@ if (process.env.NODE_ENV !== 'production') {
   db_username = config.USER;
   db_password = config.PASSWORD;
   db_name = config.DB;
+  db_connections = config.CONNECTIONS
 }
 
 //-----------------------------------------------------------------------------------------
@@ -141,6 +143,7 @@ const pool = mysql.createPool({
   password: db_password,
   database : db_name,
   multipleStatements: true,
+  connectionLimit: db_connections
 });
 
 // Getting path to init_data.sql to initialize the database
