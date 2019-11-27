@@ -1,3 +1,10 @@
+# Links to github repositories for mobile versions of this App
+
+### Android App
+	https://github.com/rehman000/DeathMD-Android
+### iOS App
+	https://github.com/rehman000/DeathMD-iOS
+	
 # Setting up our project for development
 
 ## Necessary Technologies
