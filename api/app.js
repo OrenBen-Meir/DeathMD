@@ -64,7 +64,7 @@ function train(pool, res = null) {
     if (err){
       if(res) {
         console.error(err.message);
-        console.error(err.stacl);
+        console.error(err.stack);
         return res.status(400);
       }
       throw err;
@@ -179,30 +179,42 @@ app.use(bodyParser.json());
 
 // sends array of symptoms
 app.get('/api/symptoms', (req, res) => {
-  pool.query(all_symptoms, (err, results) => {
-    if(err) {
-      console.error(err.message);
-      console.error(err.stack)
-      return res.sendStatus(404);
-    }
-    console.log("Sending all symptoms!!");
-    console.log(`All symptoms:\n${JSON.stringify(results)}`);
-    return res.json(results);
-  });
+  try{
+    pool.query(all_symptoms, (err, results) => {
+      if(err) {
+        console.error(err.message);
+        console.error(err.stack)
+        return res.sendStatus(404);
+      }
+      console.log("Sending all symptoms!!");
+      console.log(`All symptoms:\n${JSON.stringify(results)}`);
+      return res.json(results);
+    });
+  } catch(err) {
+    console.error(err.message);
+    console.error(err.stack);
+    return res.sendStatus(404);
+  }
 });
 
 // sends array of conditions
 app.get('/api/conditions', (req, res) => {
-  pool.query(all_conditions, (err, results) => {
-    if(err) {
-      console.error(err.message);
-      console.error(err.stack)
-      return res.sendStatus(404);
-    }
-    console.log("Sending all conditions!!");
-    console.log(`All conditions:\n${JSON.stringify(results)}`);
-    return res.json(results);
-  });
+  try{
+    pool.query(all_conditions, (err, results) => {
+      if(err) {
+        console.error(err.message);
+        console.error(err.stack)
+        return res.sendStatus(404);
+      }
+      console.log("Sending all conditions!!");
+      console.log(`All conditions:\n${JSON.stringify(results)}`);
+      return res.json(results);
+    });
+  } catch(err) {
+    console.error(err.message);
+    console.error(err.stack);
+    return res.sendStatus(404);
+  }
 });
 
 /*
@@ -211,15 +223,20 @@ app.get('/api/conditions', (req, res) => {
 * and whose values are numerical values 
 */
 app.post('/api/diagnose', (req, res) => {
-  let diagnosable = true;
-  const symptomData = req.body.symptomData;
-  for(let symptomName in symptomData ){
-    const intensity = symptomData[symptomName];
-    if( intensity < 0 || 5 < intensity){ 
-      return res.sendStatus(400);
-    } 
+  try{
+    const symptomData = req.body.symptomData;
+    for(let symptomName in symptomData ){
+      const intensity = symptomData[symptomName];
+      if( intensity < 0 || 5 < intensity){ 
+        return res.sendStatus(400);
+      } 
+    }
+    diagnose(symptomData, res); // Will handle diagnosis and responding to client   
+  } catch(err) {
+    console.error(err.message);
+    console.error(err.stack);
+    return res.sendStatus(400);
   }
-  diagnose(symptomData, res); // Will handle diagnosis and responding to client 
 });
 
 /*
@@ -230,54 +247,46 @@ app.post('/api/diagnose', (req, res) => {
 * whose values are boolean.
 */ 
 app.post('/api/retrain', (req, res) => {
-  console.log('Attempting to input new subject data to retrain doctor!')
-  // get symptom and diagnosis data
-  const symptomData = req.body.symptomData;
-  const diagnosisData = req.body.diagnosisData;
-  //query all symptoms, conditions, and the row with the biggest id in Subjects
-  pool.query(all_symptoms+all_conditions+all_subjects, (err, results) => {
-    if(err){
-      console.error(err.message);
-      console.error(err.stack);
-      return res.sendStatus(404);
-    }
-    const symptoms = results[0];
-    const conditions = results[1];
-    const subjects = results[2];
-    let id_subj_array = []; // array of subject ids
-    for(let subj_row of subjects) { // initializing array of subject ids
-      id_subj_array.push(subj_row.id);
-    }
-    const newSubjId = Random32IntNotInArray(id_subj_array); // New id of new subjects based on random value that isn't already used as a subject id
-    let new_user_query = `INSERT INTO Subjects(id, added) VALUES(${newSubjId}, True);`; // sets up query string of new subject
-    for (let symptom_row of symptoms){ // symptom row of symptom query
-      const symptom_id = symptom_row.id;
-      const symptom_name = symptom_row.symptom_name;
-      const intensity = symptomData[symptom_name];
-      if(intensity) { // makes sure only symptoms with non-zero intensity added
-        new_user_query += `INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity) VALUES(${newSubjId}, ${symptom_id}, ${intensity});`;
+  try{
+    console.log('Attempting to input new subject data to retrain doctor!');
+    // get symptom and diagnosis data
+    const symptomData = req.body.symptomData;
+    const diagnosisData = req.body.diagnosisData;
+    //query all symptoms, conditions, and the row with the biggest id in Subjects
+    pool.query(all_symptoms+all_conditions+all_subjects, (err, results) => {
+      if(err){
+        console.error(err.message);
+        console.error(err.stack);
+        return res.sendStatus(404);
       }
-    }
-    for(let condition_row of conditions) { // condition row of condition query
-      const condition_id = condition_row.id;
-      const condition_name = condition_row.condition_name;
-      const hasCondition = diagnosisData[condition_name]; // if user has condition
-      if(hasCondition) { // Only allows the user's diagnosis of an actual condition to be inserted
-        new_user_query += `INSERT INTO DiagnosisData(subject_id, condition_id) VALUES(${newSubjId}, ${condition_id});`;
+      const symptoms = results[0];
+      const conditions = results[1];
+      const subjects = results[2];
+      let id_subj_array = []; // array of subject ids
+      for(let subj_row of subjects) { // initializing array of subject ids
+        id_subj_array.push(subj_row.id);
       }
-    }
-    console.log("New subject query:\n", new_user_query);
-    // Create an sql transaction, anny error forces a rollback
-    pool.getConnection( (err, connection) => {
-      if (err) {
-        return connection.rollback( () => {
-          console.error(err.message);
-          console.error(err.stack);
-          connection.release();
-          return res.sendStatus(404);
-        });
-      };
-      connection.beginTransaction( (err) => {
+      const newSubjId = Random32IntNotInArray(id_subj_array); // New id of new subjects based on random value that isn't already used as a subject id
+      let new_user_query = `INSERT INTO Subjects(id, added) VALUES(${newSubjId}, True);`; // sets up query string of new subject
+      for (let symptom_row of symptoms){ // symptom row of symptom query
+        const symptom_id = symptom_row.id;
+        const symptom_name = symptom_row.symptom_name;
+        const intensity = symptomData[symptom_name];
+        if(intensity) { // makes sure only symptoms with non-zero intensity added
+          new_user_query += `INSERT INTO SubjectSymptoms(subject_id, symptom_id, intensity) VALUES(${newSubjId}, ${symptom_id}, ${intensity});`;
+        }
+      }
+      for(let condition_row of conditions) { // condition row of condition query
+        const condition_id = condition_row.id;
+        const condition_name = condition_row.condition_name;
+        const hasCondition = diagnosisData[condition_name]; // if user has condition
+        if(hasCondition) { // Only allows the user's diagnosis of an actual condition to be inserted
+          new_user_query += `INSERT INTO DiagnosisData(subject_id, condition_id) VALUES(${newSubjId}, ${condition_id});`;
+        }
+      }
+      console.log("New subject query:\n", new_user_query);
+      // Create an sql transaction, anny error forces a rollback
+      pool.getConnection( (err, connection) => {
         if (err) {
           return connection.rollback( () => {
             console.error(err.message);
@@ -286,33 +295,47 @@ app.post('/api/retrain', (req, res) => {
             return res.sendStatus(404);
           });
         };
-        connection.query(new_user_query, (err) => { // query new_user_query in transaction
-          if(err){
+        connection.beginTransaction( (err) => {
+          if (err) {
             return connection.rollback( () => {
               console.error(err.message);
               console.error(err.stack);
               connection.release();
-              return res.sendStatus(400);
+              return res.sendStatus(404);
             });
           };
-          connection.commit( (err) => { // transaction ready to be committed
-            if (err) {
-              return connection.rollback(function() {
+          connection.query(new_user_query, (err) => { // query new_user_query in transaction
+            if(err){
+              return connection.rollback( () => {
                 console.error(err.message);
                 console.error(err.stack);
                 connection.release();
-                return res.sendStatus(404);
+                return res.sendStatus(400);
               });
             };
-            console.log("New Subject Added, transaction successful!!");
-            // retrain doctor
-            train(connection, res);
-            connection.release();
+            connection.commit( (err) => { // transaction ready to be committed
+              if (err) {
+                return connection.rollback(function() {
+                  console.error(err.message);
+                  console.error(err.stack);
+                  connection.release();
+                  return res.sendStatus(404);
+                });
+              };
+              console.log("New Subject Added, transaction successful!!");
+              // retrain doctor
+              train(connection, res);
+              connection.release();
+            });
           });
         });
       });
-    });
-  })
+    })
+  } catch(err) {
+    console.error(err.message)
+    console.error(err.stack)
+    res.sendStatus(400);
+  }
 });
 
 //---------------------------------------------------------------------------------------
