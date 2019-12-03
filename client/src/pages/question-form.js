@@ -128,7 +128,7 @@ export default class QuestionForm extends Component {
         responseJsx.push((
           <div className="p-3 correction-custom">
             <h5 className="text-white mt-1">Condition: {condition}</h5>
-            <div className="text-white">Confidence Score: {this.state.response[condition].confidence}</div>
+            <div className="text-white">Confidence Score: {this.state.response[condition].confidence*100}%</div>
           </div>
         ));
       }
