@@ -76,7 +76,7 @@ function train(pool, res = null) {
     // script arguments
     const train_args = [script_path].concat(train_data).concat(res == null);
     // execute training script
-    const train_process = spawn('python', train_args);
+    const train_process = spawn('python3', train_args);
     // Script feedback
     train_process.stdout.on('data', data => {
       console.log(data.toString());
@@ -99,7 +99,7 @@ function diagnose(symptomData, res = null){
   // get path to diagnose.py
   const script_path = path.join(process.cwd(), 'api', 'doctor', 'diagnose.py');
   // execute diagnosis script
-  const diagnosis_process = spawn('python', [script_path, JSON.stringify(symptomData)]);
+  const diagnosis_process = spawn('python3', [script_path, JSON.stringify(symptomData)]);
   // script feedback
   diagnosis_process.stdout.on('data', data => {
     const diagnosis = JSON.parse(data.toString()); // gets diagnosis from script's stdout
