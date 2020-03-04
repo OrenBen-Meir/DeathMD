@@ -72,7 +72,7 @@ function train(pool, res = null) {
     // Mapping train data into JSON strings
     train_data = train_data.map(elem => JSON.stringify(elem));
     // Path to python training script
-    const script_path = path.join(process.cwd(), 'api', 'doctor', 'train_doctor.py');
+    const script_path = path.join(__dirname, 'doctor', 'train_doctor.py');
     // script arguments
     const train_args = [script_path].concat(train_data).concat(res == null);
     // execute training script
@@ -97,7 +97,7 @@ function train(pool, res = null) {
 // diagnoses based on symptom data and will send diagnosis result to client if res is specified
 function diagnose(symptomData, res = null){
   // get path to diagnose.py
-  const script_path = path.join(process.cwd(), 'api', 'doctor', 'diagnose.py');
+  const script_path = path.join(__dirname, 'doctor', 'diagnose.py');
   // execute diagnosis script
   const diagnosis_process = spawn('python3', [script_path, JSON.stringify(symptomData)]);
   // script feedback
@@ -148,7 +148,7 @@ const pool = mysql.createPool({
 
 if (process.env.NODE_ENV !== 'production'){
   // Getting path to init_data.sql to initialize the database
-  const init_path = path.join(process.cwd(),'api','sql', 'init_data.sql');
+  const init_path = path.join(__dirname, 'sql', 'init_data.sql');
   // Reading init_data.sql
   fs.readFile(init_path, (err, contents) => {
     if (err) throw err;
