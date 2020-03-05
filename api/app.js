@@ -149,7 +149,7 @@ const pool = mysql.createPool({
 
 if (process.env.NODE_ENV !== 'production'){
   // Getting path to init_data.sql to initialize the database
-  const init_path = path.join(__dirname,'sql', 'init_data.sql');
+  const init_path = path.join(__dirname, 'sql', 'init_data.sql');
   // Reading init_data.sql
   fs.readFile(init_path, (err, contents) => {
     if (err) throw err;
@@ -355,7 +355,7 @@ if (process.env.NODE_ENV === 'production') {
 //---------------------------------------------------------------------------------------
 // Create Server Using port
 //---------------------------------------------------------------------------------------
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
