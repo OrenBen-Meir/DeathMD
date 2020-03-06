@@ -13,28 +13,15 @@ const spawn          = cp.spawn;
 // Sets database info and env variables
 //---------------------------------------------------------------------------------------
 
-let db_url;
-let db_username;
-let db_password;
-let db_name;
-let db_connections = 10;
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-  db_url = process.env.DATABASE_URL;
-  db_username = process.env.DB_USERNAME;
-  db_password = process.env.DB_PASSWORD;
-  db_name = process.env.DB_NAME;
-} else {
-  const config = require('./Open db.config');
-  db_url = config.HOST;
-  db_username = config.USER;
-  db_password = config.PASSWORD;
-  db_name = config.DB;
-  db_connections = config.CONNECTIONS
-}
+const db_url = process.env.DATABASE_URL;
+const db_username = process.env.DB_USERNAME;
+const db_password = process.env.DB_PASSWORD;
+const db_name = process.env.DB_NAME;
+const db_connections = process.env.DB_CONNECTIONS;
+const port = process.env.PORT;
 
 //-----------------------------------------------------------------------------------------
-// deployment
+// Logging
 //-----------------------------------------------------------------------------------------
 
 // add http request logging to help us debug and audit app use
@@ -355,7 +342,6 @@ if (process.env.NODE_ENV === 'production') {
 //---------------------------------------------------------------------------------------
 // Create Server Using port
 //---------------------------------------------------------------------------------------
-const port = process.env.PORT || 8080;
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
