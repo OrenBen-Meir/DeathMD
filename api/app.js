@@ -13,7 +13,7 @@ const spawn          = cp.spawn;
 // Sets database info and env variables
 //---------------------------------------------------------------------------------------
 
-if (process.env.NODE_ENV !== 'production') { // So .env file recognized for development
+if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
