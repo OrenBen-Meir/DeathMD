@@ -1,3 +1,14 @@
+# Links to deployed websites
+We have deployed DeathMD using heroku (which ia a cloud platform) and through a home server.
+For our home server we used apache2 on a raspberry pi using raspbian (which is debian based). 
+We used a Dataplicity Wormhole to have our home server connected to the internet.
+We may later use AWS to host our site.
+
+### DeathMD links
+Heroku link: https://deathmd.herokuapp.com/
+
+Home/Raspberry-Pi Server link: https://niobous-lemur-0864.dataplicity.io/
+
 # Links to github repositories for mobile versions of this App
 
 ### Android App
