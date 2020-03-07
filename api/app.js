@@ -21,7 +21,7 @@ const db_url = process.env.DATABASE_URL;
 const db_username = process.env.DB_USERNAME;
 const db_password = process.env.DB_PASSWORD;
 const db_name = process.env.DB_NAME;
-const db_connections = process.env.DB_CONNECTIONS;
+const db_connections = parseInt(process.env.DB_CONNECTIONS);
 const port = process.env.PORT;
 
 console.log('Custom env :', {db_url, db_name, db_username, db_password, db_connections, port});
