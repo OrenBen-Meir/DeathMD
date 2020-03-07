@@ -1,4 +1,6 @@
 from joblib import load
+import sys
+import os
 
 def incr_digit_list(digit_list, base=2):
     """
@@ -24,3 +26,9 @@ def doctor_filename():
     the Doctor object is being serialized
     """
     return "doctor.joblib"
+
+def doctor_path():
+    """
+    returns the absolute path of the serializes doctor object
+    """
+    return os.path.join(sys.path[0], doctor_filename())

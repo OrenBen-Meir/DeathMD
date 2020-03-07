@@ -3,9 +3,9 @@ import json
 import numpy as np 
 from doctor import Doctor
 from joblib import load
-from helper_functions import doctor_filename
+from helper_functions import doctor_path
 
-my_doctor = load(doctor_filename()) # loads doctor object
+my_doctor = load(doctor_path()) # loads doctor object
 symptom_data = json.loads(sys.argv[1]) # dictionary with key being a symptom and its value the intensity
 symptoms = my_doctor.symptoms # list of symptoms
 
